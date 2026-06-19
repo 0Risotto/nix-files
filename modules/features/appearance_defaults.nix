@@ -28,6 +28,7 @@
         noto-fonts
         noto-fonts-color-emoji
         liberation_ttf
+        nerd-fonts.jetbrains-mono
       ];
 
       fontconfig.defaultFonts = {
