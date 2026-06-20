@@ -28,6 +28,12 @@
     networking.networkmanager.enable = true;
 
     security.sudo.wheelNeedsPassword = false;
+    services.udisks2.enable = true;
+
+    hardware.bluetooth.enable = true;
+
+    services.power-profiles-daemon.enable = true;
+    services.upower.enable = true;
 
     nix.settings.experimental-features = [
       "nix-command"

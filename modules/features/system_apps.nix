@@ -7,29 +7,29 @@
     nixpkgs.config.allowUnfree = true;
 
     environment.systemPackages = with pkgs; [
+      inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
       #editors
       vscode
       zed-editor
-      bibata-cursors      
- vesktop     
+      vesktop
       #terminal stuff
       git
       gh
-      fish
+
       starship
       eza
       bat
       # I hated adding this
       fastfetch
-      
+      fish
+
       #themes and icons
       flat-remix-gtk
       flat-remix-icon-theme
-      adwaita-icon-theme
       nwg-look
-      
+
       #editors
-      neovim     
+      neovim
     ];
   };
 }

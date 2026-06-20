@@ -26,12 +26,15 @@
       gamescope
       gamemode
       heroic
-      
+      lutris
+
       #productivity 
       thunderbird
       obsidian
       tuxedo
 
+      #ai
+      pi-coding-agent
     ];
   };
 }

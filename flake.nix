@@ -8,7 +8,8 @@
     silent-sddm.url = "github:uiriansan/SilentSDDM";
     lanzaboote.url = "github:nix-community/lanzaboote";
 
-    noctalia.url = "github:noctalia-dev/noctalia/legacy-v4";
+    zen-browser.url = "github:youwen5/zen-browser-flake";
+    noctalia.url = "github:noctalia-dev/noctalia";
   };
 
   outputs = inputs: inputs.flake-parts.lib.mkFlake {inherit inputs;} (inputs.import-tree ./modules);

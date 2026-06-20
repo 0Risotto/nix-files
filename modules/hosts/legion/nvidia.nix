@@ -1,16 +1,33 @@
 { self, inputs, ... }:
-
 {
   flake.nixosModules.nvidia = { config, pkgs, ... }:
   {
-    hardware.graphics.enable = true;
+    hardware.graphics = {
+      enable = true;
+      enable32Bit = true;
+    };
     
     services.xserver.videoDrivers = [ "nvidia" ];
     
-    hardware.nvidia.open = true;
+    hardware.nvidia = {
+      open = true;
+      modesetting.enable = true;
+      package = config.boot.kernelPackages.nvidiaPackages.production;
+      
+      prime = {
+        sync.enable = true;
+        nvidiaBusId = "PCI:1:0:0";
+        intelBusId = "PCI:0:0:0";
+      };
+      
+      nvidiaSettings = true;
+      powerManagement.enable = true;
+    };
 
-    hardware.nvidia.modesetting.enable = true;   
-
-    hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.production;
+    environment.sessionVariables = {
+      __NV_PRIME_RENDER_OFFLOAD = "1";
+      __GLX_VENDOR_LIBRARY_NAME = "nvidia";
+      VK_ICD_FILENAMES = "/run/opengl-driver/share/vulkan/icd.d/nvidia_icd.json";
+    };
   };
 }

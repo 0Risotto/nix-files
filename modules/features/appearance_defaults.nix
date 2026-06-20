@@ -43,35 +43,9 @@
     environment.systemPackages = with pkgs; [
       flat-remix-gtk
       flat-remix-icon-theme
-      bibata-cursors # Replaced adwaita with bibata
+      bibata-cursors 
     ];
     
-    environment.sessionVariables = {
-      XCURSOR_THEME = "Bibata-Modern-Classic"; # Swap to -Ice or -Amber if preferred
-      XCURSOR_SIZE = "24";
-    };
-    
-    programs.dconf.enable = true;
-
-    environment.etc."xdg/gtk-3.0/settings.ini".text = ''
-      [Settings]
-      gtk-icon-theme-name=Flat-Remix-Blue
-      gtk-theme-name=Flat-Remix-GTK-Blue
-      gtk-cursor-theme-name=Bibata-Modern-Classic
-      gtk-cursor-theme-size=24
-      gtk-font-name=Inter 11
-    '';
-
-    environment.etc."xdg/gtk-4.0/settings.ini".text = ''
-      [Settings]
-      gtk-icon-theme-name=Flat-Remix-Blue
-      gtk-theme-name=Flat-Remix-GTK-Blue
-      gtk-cursor-theme-name=Bibata-Modern-Classic
-      gtk-cursor-theme-size=24
-      gtk-font-name=Inter 11
-    '';
-
-    environment.etc."X11/cursors/default".source = "${pkgs.bibata-cursors}/share/icons/Bibata-Modern-Classic/cursors";
   };
 }
 
