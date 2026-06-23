@@ -1,0 +1,51 @@
+// ────────────── Output Configuration ──────────────
+// You can run `niri msg outputs` to get the correct name for your displays.
+// You will have to remove "/-" and edit it before it takes effect.
+// https://github.com/YaLTeR/niri/wiki/Configuration:-Outputs
+
+output "HDMI-A-1" {
+    position x=0 y=0
+    mode "1920x1080@200" // or 200.000 if you prefer
+}
+
+output "eDP-1" {
+    position x=1920 y=0
+}
+workspace "1"{
+    open-on-output "HDMI-A-1"
+}
+
+workspace "2"{
+    open-on-output "HDMI-A-1"
+}
+
+workspace "3"{
+    open-on-output "HDMI-A-1"
+}
+
+workspace "4"{
+    open-on-output "HDMI-A-1"
+}
+
+workspace "5"{
+open-on-output "HDMI-A-1"
+}
+
+workspace "6"{
+open-on-output "HDMI-A-1"
+}
+
+workspace "7"{
+    open-on-output "HDMI-A-1"
+}
+
+workspace "8"{
+    open-on-output "HDMI-A-1"
+}
+workspace "9"{
+    open-on-output "HDMI-A-1"
+}
+
+workspace "10" {
+    open-on-output "eDP-1"
+}
