@@ -5,7 +5,7 @@
     programs.firefox.enable = true;
 
     nixpkgs.config.allowUnfree = true;
-
+    
     environment.systemPackages = with pkgs; [
       inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
       #editors
@@ -22,6 +22,7 @@
       # I hated adding this
       fastfetch
       fish
+      nushell
 
       #themes and icons
       flat-remix-gtk

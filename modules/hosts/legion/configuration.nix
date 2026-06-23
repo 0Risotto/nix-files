@@ -6,7 +6,7 @@
     imports = [
       self.nixosModules.legionHardware
       self.nixosModules.nvidia
-      self.nixosModules.efi   
+      self.nixosModules.efi
     ];
 
     users.users.legion = {
@@ -17,7 +17,7 @@
         "wheel"
       ];
     };
-    
+
     boot.loader.systemd-boot.enable = true;
     boot.loader.efi.canTouchEfiVariables = true;
 
@@ -29,8 +29,8 @@
 
     security.sudo.wheelNeedsPassword = false;
     services.udisks2.enable = true;
-
     hardware.bluetooth.enable = true;
+
 
     services.power-profiles-daemon.enable = true;
     services.upower.enable = true;
@@ -50,4 +50,3 @@
     system.stateVersion = "26.05";
   };
 }
-
