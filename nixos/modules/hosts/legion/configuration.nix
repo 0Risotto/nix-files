@@ -1,52 +1,54 @@
 { self, inputs, ... }:
 
 {
-  flake.nixosModules.legionConfiguration = { config, pkgs, ... }:
-  {
+  flake.nixosModules.legionConfiguration = { config, pkgs, lib, ... }: {
     imports = [
       self.nixosModules.legionHardware
       self.nixosModules.nvidia
       self.nixosModules.efi
     ];
-
-    users.users.legion = {
-      isNormalUser = true;
-      description = "legion";
-      extraGroups = [
-        "networkmanager"
-        "wheel"
-      ];
+    
+    settings = { 
+      hostname = "legion";
+      users = {
+        legion = {
+          isAdmin= true;
+          homeModule = ../../home/legion.nix;
+        };
+      };
     };
 
-    boot.loader.systemd-boot.enable = true;
-    boot.loader.efi.canTouchEfiVariables = true;
+    #Generates nixos users from settings.users
+    users.users = lib.mapAttrs (name: cfg: {
+      isNormalUser = true;
+      description = name;
+      extraGroups = lib.optionals cfg.isAdmin [ "networkmanager" "wheel" ];
+    }) config.settings.users;
 
     boot.kernelPackages = pkgs.linuxPackages_latest;
-
-    networking.hostName = "legion";
-
-    networking.networkmanager.enable = true;
-
-    security.sudo.wheelNeedsPassword = false;
-    services.udisks2.enable = true;
-    hardware.bluetooth.enable = true;
-
-
-    services.power-profiles-daemon.enable = true;
-    services.upower.enable = true;
-
-    nix.settings.experimental-features = [
-      "nix-command"
-      "flakes"
-    ];
-
-    services.xserver.xkb = {
-      layout = "us";
-      variant = "";
+    
+    networking = {
+       hostName = config.settings.hostname;
+       networkmanager.enable = true;
     };
-
-    services.printing.enable = true;
-
+    
+    security.sudo.wheelNeedsPassword = false;
+    
+    services = {
+      udisks2.enable = true;
+      power-profiles-daemon.enable = true;
+      upower.enable = true;
+      printing.enable = true;
+      xserver.xkb = {
+        layout = "us";
+        variant ="";
+      };
+    };
+    
+    hardware.bluetooth.enable = true;
+    
+    nix.settings.experimental-features = [ "nix-command" "flakes"];
+    
     system.stateVersion = "26.05";
   };
 }

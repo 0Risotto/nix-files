@@ -1,14 +1,11 @@
 { self, inputs, ... }:
 {
-  flake.nixosModules.noctalia = { config, pkgs, lib, ... }: {
-
+  flake.nixosModules.noctalia = { config, pkgs, ... }: {
+    imports = [ inputs.noctalia.nixosModules.default ];
+    
     nix.settings = {
       extra-substituters = [ "https://noctalia.cachix.org" ];
       extra-trusted-public-keys = [ "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4=" ];
     };
-    environment.systemPackages = with pkgs; [
-      inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default
-    ];
-
   };
 }

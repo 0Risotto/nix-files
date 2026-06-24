@@ -14,14 +14,11 @@
     
     environment.systemPackages = with pkgs; [
       pavucontrol          
-      pulsemixer          # Terminal-based volume mixer
-      alsa-utils          # ALSA utilities (aplay, arecord, etc.)
-      alsa-tools          # Additional ALSA tools
-      pamixer             # PulseAudio command-line mixer
-      playerctl           # Media player controls
+      pulsemixer
+      alsa-utils
+      alsa-tools
+      pamixer
+      playerctl
     ];
-    
-
-    services.dbus.enable = true;
   };
 }

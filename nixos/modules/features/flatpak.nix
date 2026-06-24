@@ -1,11 +1,6 @@
 { self, inputs, ... }:
 {
-  flake.nixosModules.flatpak = { config, pkgs, ... }:
-  {
+  flake.nixosModules.flatpak = { config, ...}: {
     services.flatpak.enable = true;
-    
-    environment.systemPackages = with pkgs; [
-      flatpak
-    ];
   };
 }
