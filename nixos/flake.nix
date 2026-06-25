@@ -21,7 +21,8 @@
     };
   };
 
-  outputs = inputs:
+  outputs =
+    inputs:
     inputs.flake-parts.lib.mkFlake { inherit inputs; } {
       imports = [
         ./modules/parts.nix
@@ -40,8 +41,22 @@
         ./modules/features/flatpak.nix
         ./modules/home/default.nix
         ./modules/devshells/default.nix
-        ./modules/formatter.nix
         inputs.treefmt-nix.flakeModule
       ];
+
+      perSystem = { pkgs, ... }: {
+        treefmt.config = {
+          projectRootFile = "flake.nix";
+
+          programs.nixfmt = {
+            enable = true;
+            package = pkgs.nixfmt-rfc-style;
+          };
+
+          programs.deadnix = {
+            enable = true;
+          };
+        };
+      };
     };
 }

@@ -1,33 +1,33 @@
-{ self, inputs, ... }:
-{
-  flake.nixosModules.nvidia = { config, pkgs, ... }:
-  {
-    hardware.graphics = {
-      enable = true;
-      enable32Bit = true;
-    };
-    
-    services.xserver.videoDrivers = [ "nvidia" ];
-    
-    hardware.nvidia = {
-      open = true;
-      modesetting.enable = true;
-      package = config.boot.kernelPackages.nvidiaPackages.production;
-      
-      prime = {
-        sync.enable = true;
-        nvidiaBusId = "PCI:1:0:0";
-        intelBusId = "PCI:0:0:0";
+_: {
+  flake.nixosModules.nvidia =
+    { config, ... }:
+    {
+      hardware.graphics = {
+        enable = true;
+        enable32Bit = true;
       };
-      
-      nvidiaSettings = true;
-      powerManagement.enable = true;
-    };
 
-    environment.sessionVariables = {
-      __NV_PRIME_RENDER_OFFLOAD = "1";
-      __GLX_VENDOR_LIBRARY_NAME = "nvidia";
-      VK_ICD_FILENAMES = "/run/opengl-driver/share/vulkan/icd.d/nvidia_icd.json";
+      services.xserver.videoDrivers = [ "nvidia" ];
+
+      hardware.nvidia = {
+        open = true;
+        modesetting.enable = true;
+        package = config.boot.kernelPackages.nvidiaPackages.production;
+
+        prime = {
+          sync.enable = true;
+          nvidiaBusId = "PCI:1:0:0";
+          intelBusId = "PCI:0:0:0";
+        };
+
+        nvidiaSettings = true;
+        powerManagement.enable = true;
+      };
+
+      environment.sessionVariables = {
+        __NV_PRIME_RENDER_OFFLOAD = "1";
+        __GLX_VENDOR_LIBRARY_NAME = "nvidia";
+        VK_ICD_FILENAMES = "/run/opengl-driver/share/vulkan/icd.d/nvidia_icd.json";
+      };
     };
-  };
 }

@@ -27,7 +27,7 @@ jobs:
           authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
           extraPullNames: ""
 
-      - run: nix flake check --print-build-logs
+      - run: nix flake check ./nixos --print-build-logs
 
   check-format:
     name: check formatting
@@ -50,7 +50,7 @@ jobs:
 
       - name: Check formatting with treefmt
         run: |
-          nix fmt -- --fail-on-change
+          nix fmt ./nixos -- --fail-on-change
         shell: bash
 
   lint:
@@ -74,7 +74,7 @@ jobs:
 
       - name: Run statix check
         run: |
-          nix run nixpkgs#statix check .
+          nix run nixpkgs#statix check ./nixos
 
   build-nixos:
     name: build NixOS configuration
@@ -97,7 +97,7 @@ jobs:
 
       - name: Build NixOS system
         run: |
-          nix build .#nixosConfigurations.legion.config.system.build.toplevel \
+          nix build ./nixos#nixosConfigurations.legion.config.system.build.toplevel \
             --print-build-logs
 
   build-home-manager:
@@ -121,7 +121,7 @@ jobs:
 
       - name: Build home-manager generation
         run: |
-          nix build .#nixosConfigurations.legion.config.home-manager.users.legion.home.activationPackage \
+          nix build ./nixos#nixosConfigurations.legion.config.home-manager.users.legion.home.activationPackage \
             --print-build-logs
 
   devshells:
@@ -161,7 +161,7 @@ jobs:
 
       - name: Build devshell ${{ matrix.shell }}
         run: |
-          nix build .#devShells.x86_64-linux.${{ matrix.shell }} \
+          nix build ./nixos#devShells.x86_64-linux.${{ matrix.shell }} \
             --print-build-logs
 
   evaluate:
@@ -185,5 +185,5 @@ jobs:
 
       - name: Evaluate all attributes
         run: |
-          nix eval .# --apply 'x: builtins.deepSeq x x' 2>&1 | head -100
+          nix eval ./nixos# --apply 'x: builtins.deepSeq x x' 2>&1 | head -100
           echo "✅ Flake evaluated successfully"

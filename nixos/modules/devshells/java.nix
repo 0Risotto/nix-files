@@ -1,5 +1,4 @@
-{ self, inputs, ... }:
-{
+_: {
   perSystem = { pkgs, ... }: {
     devShells.java = pkgs.mkShell {
       packages = with pkgs; [

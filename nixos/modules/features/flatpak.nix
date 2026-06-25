@@ -1,6 +1,5 @@
-{ self, inputs, ... }:
-{
-  flake.nixosModules.flatpak = { config, ...}: {
+_: {
+  flake.nixosModules.flatpak = _: {
     services.flatpak.enable = true;
   };
 }

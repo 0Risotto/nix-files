@@ -1,5 +1,4 @@
-{ config, pkgs, inputs, settings, lib, ... }:
-{
+_: {
   imports = [
     ./packages.nix
     ./shell.nix

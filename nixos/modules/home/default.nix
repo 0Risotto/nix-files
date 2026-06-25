@@ -1,21 +1,26 @@
-{ self, inputs, ... }:
+{ inputs, ... }:
 {
-  flake.nixosModules.home = { config, pkgs, lib, ... }: {
+  flake.nixosModules.home = { config, lib, ... }: {
     imports = [ inputs.home-manager.nixosModules.home-manager ];
 
     home-manager = {
       useGlobalPkgs = true;
       useUserPackages = true;
-      
-      users = lib.mapAttrs (name: cfg: { config, pkgs, lib, ... }: {
+
+      users = lib.mapAttrs (name: cfg: { ... }: {
         imports = [ cfg.homeModule ];
-        home.username = name;
-        home.homeDirectory = "/home/${name}";
-        home.stateVersion = "26.05";
+        home = {
+          username = name;
+          homeDirectory = "/home/${name}";
+          stateVersion = "26.05";
+        };
         programs.home-manager.enable = true;
       }) config.settings.users;
 
-      extraSpecialArgs = { inherit inputs; settings = config.settings; };
+      extraSpecialArgs = {
+        inherit inputs;
+        inherit (config) settings;
+      };
     };
   };
 }

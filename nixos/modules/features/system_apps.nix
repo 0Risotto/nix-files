@@ -1,6 +1,6 @@
-{ self, inputs, ... }:
+{ inputs, ... }:
 {
-  flake.nixosModules.systemApps = { config, pkgs, ... }: {
+  flake.nixosModules.systemApps = { pkgs, ... }: {
     programs.firefox.enable = true;
     nixpkgs.config.allowUnfree = true;
 
