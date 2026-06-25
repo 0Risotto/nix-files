@@ -14,6 +14,11 @@
 
     zen-browser.url = "github:youwen5/zen-browser-flake";
     noctalia.url = "github:noctalia-dev/noctalia";
+
+    treefmt-nix = {
+      url = "github:numtide/treefmt-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs:
@@ -35,6 +40,8 @@
         ./modules/features/flatpak.nix
         ./modules/home/default.nix
         ./modules/devshells/default.nix
+        ./modules/formatter.nix
+        inputs.treefmt-nix.flakeModule
       ];
     };
 }

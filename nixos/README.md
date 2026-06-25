@@ -14,6 +14,7 @@ A NixOS flake configuration for my **Lenovo Legion** laptop — system settings,
 | **Home-manager** | `modules/home/` |
 | **Dev shells** | `modules/devshells/` |
 | **Settings API** | `modules/settings.nix` |
+| **Formatter** | `modules/formatter.nix` |
 
 ---
 
@@ -60,6 +61,7 @@ nixos/
 ├── modules/
 │   ├── parts.nix                    # flake-parts system target (x86_64-linux)
 │   ├── settings.nix                 # Shared settings option (hostname, secureBoot, users)
+│   ├── formatter.nix                # treefmt config (nixfmt + deadnix)
 │   ├── hosts/
 │   │   ├── default.nix              # Exposes the "legion" NixOS configuration
 │   │   └── legion/
@@ -170,7 +172,7 @@ The system uses **Prime Sync** (not offload) — the NVIDIA GPU is always on:
 - JACK
 - `rtkit` for real-time priority
 
-### 🐟 Shell & Prompt
+### 🐟 Shell & Prompt (fish + starship)
 
 - **Fish** is the default shell with a custom greeting, handy aliases (`dev`, `clear` variants, `ls` → `eza`)
 - **Starship** provides a minimal prompt showing: command duration → directory → git branch
@@ -227,6 +229,39 @@ Installed via `modules/home/packages.nix`:
 - **AI**: [pi-coding-agent](https://github.com/nicdaly/pi)
 - **Browsers**: Zen Browser (from flake input), Firefox
 - **Theming tools**: nwg-look (GTK settings GUI)
+
+---
+
+## 🔧 Formatting & Linting
+
+### Format with `nix fmt`
+
+```bash
+# Format all Nix files in the repo
+nix fmt
+
+# Check formatting without writing changes
+nix fmt -- --fail-on-change
+```
+
+Uses [treefmt-nix](https://github.com/numtide/treefmt-nix) with:
+
+| Tool | What it does |
+|------|-------------|
+| **nixfmt** | Formats all `.nix` files to RFC 166 style |
+| **deadnix** | Removes unused variable bindings and dead code |
+
+### Lint with statix
+
+```bash
+# Check for anti-patterns
+nix run nixpkgs#statix check .
+
+# Auto-fix where possible
+nix run nixpkgs#statix fix .
+```
+
+> Both formatting and linting are enforced in CI.
 
 ---
 
