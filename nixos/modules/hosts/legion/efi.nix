@@ -8,7 +8,7 @@
       ...
     }:
     let
-      inherit (config.settings) secureBoot;
+      inherit (config.settings.efi) secureBoot canTouchEfiVariables;
     in
     {
       # Import unconditionally, use mkIf to control effects
@@ -22,7 +22,7 @@
 
       boot = {
         loader.systemd-boot.enable = lib.mkIf (!secureBoot) true;
-        loader.efi.canTouchEfiVariables = lib.mkIf (!secureBoot) true;
+        loader.efi.canTouchEfiVariables = lib.mkIf (!secureBoot) canTouchEfiVariables;
 
         lanzaboote = lib.mkIf secureBoot {
           enable = true;

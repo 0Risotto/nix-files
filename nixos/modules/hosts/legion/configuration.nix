@@ -17,7 +17,7 @@
 
       settings = {
         hostname = "legion";
-        secureBoot = true;
+        efi.secureBoot = true;
         users = {
           legion = {
             isAdmin = true;
