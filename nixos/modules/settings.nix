@@ -92,6 +92,12 @@ _: {
         description = "Enable NVIDIA GPU drivers (offload mode for hybrid laptops)";
       };
 
+      kvm = lib.mkOption {
+        type = lib.types.bool;
+        default = false;
+        description = "Enable KVM virtualization (libvirtd, virt-manager)";
+      };
+
       efi = lib.mkOption {
         type = lib.types.submodule {
           options = {

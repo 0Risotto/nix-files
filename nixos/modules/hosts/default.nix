@@ -23,6 +23,7 @@ let
         self.nixosModules.niri
         self.nixosModules.noctalia
         self.nixosModules.flatpak
+        self.nixosModules.kvm
         self.nixosModules.home
       ];
     };

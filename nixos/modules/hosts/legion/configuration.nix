@@ -19,6 +19,7 @@
         niri = true;
         noctalia = true;
         flatpak = true;
+        kvm = true;
         efi.secureBoot = true;
         users = {
           legion = {
