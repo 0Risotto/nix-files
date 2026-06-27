@@ -43,6 +43,6 @@ _: {
         "flakes"
       ];
 
-      system.stateVersion = "26.05";
+      system.stateVersion = config.settings.stateVersion;
     };
 }

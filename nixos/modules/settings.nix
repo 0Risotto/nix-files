@@ -18,6 +18,12 @@ _: {
         description = "System locale";
       };
 
+      stateVersion = lib.mkOption {
+        type = lib.types.str;
+        default = "26.05";
+        description = "NixOS state version (do not change after install)";
+      };
+
       networking = lib.mkOption {
         type = lib.types.bool;
         default = true;

@@ -12,7 +12,7 @@
         home = {
           username = name;
           homeDirectory = "/home/${name}";
-          stateVersion = "26.05";
+          stateVersion = config.settings.stateVersion;
         };
         programs.home-manager.enable = true;
       }) config.settings.users;

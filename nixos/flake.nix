@@ -40,7 +40,7 @@
         ./modules/features/niri.nix
         ./modules/features/noctalia.nix
         ./modules/features/flatpak.nix
-        ./modules/home/default.nix
+        ./modules/features/home-manager.nix
         ./modules/devshells/default.nix
         inputs.treefmt-nix.flakeModule
       ];
