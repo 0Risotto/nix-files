@@ -8,8 +8,13 @@ STATE_VERSION="26.05"
 
 # ── Checks ──────────────────────────────────────────────────────────────
 
-if [ ! -f "$REPO_DIR/flake.nix" ]; then
+if [ ! -d "$REPO_DIR/.git" ]; then
   echo "❌ Run this script from inside the dotties repo."
+  exit 1
+fi
+
+if [ ! -f "$REPO_DIR/nixos/flake.nix" ]; then
+  echo "❌ nixos/flake.nix not found — is this the dotties repo?"
   exit 1
 fi
 
