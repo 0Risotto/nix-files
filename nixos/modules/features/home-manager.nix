@@ -11,7 +11,7 @@
         imports = [ cfg.homeModule ];
         home = {
           username = name;
-          homeDirectory = "/home/legion/git/dotties/home/${name}";
+          homeDirectory = "/home/${name}";
           stateVersion = config.settings.stateVersion;
         };
         programs.home-manager.enable = true;
