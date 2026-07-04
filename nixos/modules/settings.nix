@@ -98,6 +98,12 @@ _: {
         description = "Enable KVM virtualization (libvirtd, virt-manager)";
       };
 
+      nh = lib.mkOption {
+        type = lib.types.bool;
+        default = true;
+        description = "Enable nh (Nix CLI helper) with system-level flake vars";
+      };
+
       efi = lib.mkOption {
         type = lib.types.submodule {
           options = {
