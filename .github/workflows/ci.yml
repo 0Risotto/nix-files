@@ -1,0 +1,212 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  check:
+    name: flake check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: cachix/install-nix-action@v30
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            accept-flake-config = true
+
+      - uses: cachix/cachix-action@v15
+        with:
+          name: noctalia
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+          extraPullNames: ""
+
+      - run: nix flake check ./nixos --print-build-logs
+
+  check-format:
+    name: check formatting
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: cachix/install-nix-action@v30
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            accept-flake-config = true
+
+      - uses: cachix/cachix-action@v15
+        with:
+          name: noctalia
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+          extraPullNames: ""
+
+      - name: Check formatting with treefmt
+        run: |
+          cd nixos && nix fmt -- --fail-on-change
+        shell: bash
+
+  lint:
+    name: lint with statix
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: cachix/install-nix-action@v30
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            accept-flake-config = true
+
+      - uses: cachix/cachix-action@v15
+        with:
+          name: noctalia
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+          extraPullNames: ""
+
+      - name: Run statix check
+        run: |
+          nix run nixpkgs#statix check ./nixos
+
+  discover-hosts:
+    name: discover hosts
+    runs-on: ubuntu-latest
+    outputs:
+      hosts: ${{ steps.hosts.outputs.hosts }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: cachix/install-nix-action@v30
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            accept-flake-config = true
+
+      - name: Discover nixosConfigurations
+        id: hosts
+        run: |
+          hosts=$(nix eval ./nixos#nixosConfigurations --apply 'x: builtins.attrNames x' --json)
+          echo "Discovered hosts: $hosts"
+          echo "hosts=$hosts" >> "$GITHUB_OUTPUT"
+
+  build-nixos:
+    name: build NixOS → ${{ matrix.host }}
+    needs: discover-hosts
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        host: ${{ fromJson(needs.discover-hosts.outputs.hosts) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: cachix/install-nix-action@v30
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            accept-flake-config = true
+
+      - uses: cachix/cachix-action@v15
+        with:
+          name: noctalia
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+          extraPullNames: ""
+
+      - name: Build NixOS toplevel
+        run: |
+          nix build "./nixos#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel" \
+            --print-build-logs
+
+  build-home-manager:
+    name: build HM → ${{ matrix.host }}
+    needs: discover-hosts
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        host: ${{ fromJson(needs.discover-hosts.outputs.hosts) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: cachix/install-nix-action@v30
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            accept-flake-config = true
+
+      - uses: cachix/cachix-action@v15
+        with:
+          name: noctalia
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+          extraPullNames: ""
+
+      - name: Build all home-manager users for this host
+        run: |
+          users=$(nix eval "./nixos#nixosConfigurations.${{ matrix.host }}.config.home-manager.users" \
+            --apply 'x: builtins.attrNames x' --json | jq -r '.[]')
+          for user in $users; do
+            echo "::group::Building home-manager for $user@${{ matrix.host }}"
+            nix build \
+              "./nixos#nixosConfigurations.${{ matrix.host }}.config.home-manager.users.$user.home.activationPackage" \
+              --print-build-logs
+            echo "::endgroup::"
+          done
+
+  devshell:
+    name: build default devshell
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: cachix/install-nix-action@v30
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            accept-flake-config = true
+
+      - uses: cachix/cachix-action@v15
+        with:
+          name: noctalia
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+          extraPullNames: ""
+
+      - name: Build default devshell
+        run: |
+          nix build ./nixos#devShells.x86_64-linux.default \
+            --print-build-logs
+
+  evaluate:
+    name: evaluate flake
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: cachix/install-nix-action@v30
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            accept-flake-config = true
+
+      - uses: cachix/cachix-action@v15
+        with:
+          name: noctalia
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+          extraPullNames: ""
+
+      - name: Evaluate all attributes
+        run: |
+          nix eval ./nixos# --apply 'x: builtins.deepSeq x x' 2>&1 | head -100
+          echo "✅ Flake evaluated successfully"
