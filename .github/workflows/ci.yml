@@ -12,7 +12,7 @@ jobs:
     name: flake check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: cachix/install-nix-action@v30
         with:
@@ -33,7 +33,7 @@ jobs:
     name: check formatting
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: cachix/install-nix-action@v30
         with:
@@ -57,7 +57,7 @@ jobs:
     name: lint with statix
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: cachix/install-nix-action@v30
         with:
@@ -84,7 +84,7 @@ jobs:
     outputs:
       hosts: ${{ steps.hosts.outputs.hosts }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: cachix/install-nix-action@v30
         with:
@@ -111,7 +111,7 @@ jobs:
       matrix:
         host: ${{ fromJson(needs.discover-hosts.outputs.hosts) }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: cachix/install-nix-action@v30
         with:
@@ -140,7 +140,7 @@ jobs:
       matrix:
         host: ${{ fromJson(needs.discover-hosts.outputs.hosts) }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: cachix/install-nix-action@v30
         with:
@@ -173,7 +173,7 @@ jobs:
     name: build default devshell
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: cachix/install-nix-action@v30
         with:
@@ -197,7 +197,7 @@ jobs:
     name: evaluate flake
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: cachix/install-nix-action@v30
         with:
