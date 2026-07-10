@@ -1,5 +1,6 @@
+# modules/default.nix — core system: kernel, users, locale, networking, nix settings
 _: {
-  flake.nixosModules.common =
+  flake.nixosModules.default =
     {
       config,
       pkgs,
@@ -44,5 +45,24 @@ _: {
       ];
 
       system.stateVersion = config.settings.stateVersion;
+
+      i18n = {
+        defaultLocale = config.settings.locale;
+        extraLocaleSettings = builtins.listToAttrs (
+          map (k: { name = k; value = config.settings.locale; }) [
+            "LC_ADDRESS"
+            "LC_IDENTIFICATION"
+            "LC_MEASUREMENT"
+            "LC_MONETARY"
+            "LC_NAME"
+            "LC_NUMERIC"
+            "LC_PAPER"
+            "LC_TELEPHONE"
+            "LC_TIME"
+          ]
+        );
+      };
+
+      time.timeZone = config.settings.timezone;
     };
 }

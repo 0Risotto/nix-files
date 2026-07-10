@@ -1,0 +1,64 @@
+# hosts/legion.nix
+{
+  flake.nixosModules.legion =
+    {
+      config,
+      lib,
+      modulesPath,
+      ...
+    }:
+    {
+      imports = [
+        (modulesPath + "/installer/scan/not-detected.nix")
+      ];
+
+      boot.initrd.availableKernelModules = [ "xhci_pci" "thunderbolt" "ahci" "nvme" "usbhid" "usb_storage" "sd_mod"  ];
+      boot.kernelModules = [ "kvm-intel"  ];
+      hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+
+      fileSystems."/" =
+      { device = "/dev/disk/by-uuid/6ca0d3c8-df36-4776-9c33-458b4cac1ebb";
+      fsType = "btrfs";
+      };
+      
+      fileSystems."/home" =
+      { device = "/dev/disk/by-uuid/6ca0d3c8-df36-4776-9c33-458b4cac1ebb";
+      fsType = "btrfs";
+      options = [ "subvol=home" ];
+      };
+      
+      fileSystems."/nix" =
+      { device = "/dev/disk/by-uuid/6ca0d3c8-df36-4776-9c33-458b4cac1ebb";
+      fsType = "btrfs";
+      options = [ "subvol=nix" ];
+      };
+      
+      fileSystems."/boot" =
+      { device = "/dev/disk/by-uuid/5AA0-1761";
+      fsType = "vfat";
+      options = [ "fmask=0077" "dmask=0077" ];
+      };
+
+      swapDevices = [ ];
+      nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
+
+      settings = {
+        hostname = "legion";
+        timezone = "Asia/Amman";
+        stateVersion = "26.05";
+        nvidia = true;
+        displayManager = true;
+        niri = true;
+        noctalia = true;
+        flatpak = true;
+        kvm = true;
+        efi.secureBoot = true;
+        users = {
+          legion = {
+            isAdmin = true;
+            homeModule = ../home/legion.nix;
+          };
+        };
+      };
+    };
+}

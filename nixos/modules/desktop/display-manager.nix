@@ -1,7 +1,7 @@
 { inputs, ... }:
 
 {
-  flake.nixosModules.displayManager =
+  flake.nixosModules.display-manager =
     { config, lib, ... }:
     {
       imports = [ inputs.silent-sddm.nixosModules.default ];

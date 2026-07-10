@@ -12,6 +12,8 @@
     silent-sddm.url = "github:uiriansan/SilentSDDM";
     lanzaboote.url = "github:nix-community/lanzaboote";
 
+    nixos-hardware.url = "github:NixOS/nixos-hardware";
+
     zen-browser.url = "github:youwen5/zen-browser-flake";
     noctalia.url = "github:noctalia-dev/noctalia";
 
@@ -35,7 +37,11 @@
         map (n: dir + "/${n}") files ++ builtins.concatMap (n: importTree (dir + "/${n}")) dirs;
     in
     inputs.flake-parts.lib.mkFlake { inherit inputs; } {
-      imports = importTree ./modules ++ [ inputs.treefmt-nix.flakeModule ];
+      systems = [ "x86_64-linux" ];
+
+      imports = importTree ./modules ++ importTree ./devshells ++ importTree ./hosts ++ [
+        inputs.treefmt-nix.flakeModule
+      ];
 
       perSystem = { pkgs, ... }: {
         treefmt.config = {
@@ -52,11 +58,14 @@
         };
       };
 
-      # ── Standalone home-manager ────────────────────────────────
+      # ── Standalone home-manager ─────────────────────────
       flake = {
         homeConfigurations = {
           legion = inputs.home-manager.lib.homeManagerConfiguration {
-            pkgs = import inputs.nixpkgs { system = "x86_64-linux"; config.allowUnfree = true; };
+            pkgs = import inputs.nixpkgs {
+              system = "x86_64-linux";
+              config.allowUnfree = true;
+            };
             modules = [ ./home.nix ];
             extraSpecialArgs = { inherit inputs; };
           };
