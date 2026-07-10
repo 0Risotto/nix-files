@@ -55,13 +55,13 @@ $(echo "$filesystems" | sed 's/^/      /')
         hostname = "legion";
         timezone = "Asia/Amman";
         stateVersion = "26.05";
-        nvidia = true;
+        nvidia = false;
         displayManager = true;
         niri = true;
         noctalia = true;
         flatpak = true;
         kvm = true;
-        efi.secureBoot = true;
+        efi.secureBoot = false;
         users = {
           legion = {
             isAdmin = true;
