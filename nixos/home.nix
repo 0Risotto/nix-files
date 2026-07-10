@@ -1,17 +1,10 @@
+# Standalone home-manager entry point.
+# username / homeDirectory / stateVersion are set by the caller
+# (NixOS: services/home-manager.nix; standalone: flake.nix inline module).
 { config, pkgs, inputs, ... }:
-let
-  username = "legion";
-  homeDirectory = "/home/${username}";
-in
 {
-  home = {
-    inherit username homeDirectory;
-    stateVersion = "26.05";
-  };
-
   programs.home-manager.enable = true;
 
-  # ── Import shared modules from the home/ directory ────────────
   imports = [
     ./home/packages.nix
     ./home/compositor.nix
@@ -45,4 +38,8 @@ in
     };
     configFile."user-dirs.dirs".force = true;
   };
+
+  # Per-user state version comes from the caller.
+  # For NixOS: config.settings.stateVersion.
+  # For standalone: inline module in flake.nix.
 }

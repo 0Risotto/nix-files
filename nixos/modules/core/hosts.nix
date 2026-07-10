@@ -35,7 +35,30 @@ let
           ++ map (n: self.nixosModules.${n}) featureNames;
       };
     };
+  mkHomeConfig =
+    name:
+    {
+      inherit name;
+      value = inputs.home-manager.lib.homeManagerConfiguration {
+        pkgs = import inputs.nixpkgs {
+          system = "x86_64-linux";
+          config.allowUnfree = true;
+        };
+        modules = [
+          {
+            home.username = name;
+            home.homeDirectory = "/home/${name}";
+            home.stateVersion = "26.05";
+          }
+          ../../home.nix
+        ];
+        extraSpecialArgs = { inherit inputs; };
+      };
+    };
 in
 {
-  flake.nixosConfigurations = builtins.listToAttrs (map mkHost hostNames);
+  flake = {
+    nixosConfigurations = builtins.listToAttrs (map mkHost hostNames);
+    homeConfigurations = builtins.listToAttrs (map mkHomeConfig hostNames);
+  };
 }
