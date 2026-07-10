@@ -7,7 +7,7 @@
   ++ (with pkgs; [
     kitty
     nautilus
-    hyprpicker
+    vicinae
     wl-clipboard
     grim
     slurp

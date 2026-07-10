@@ -76,9 +76,40 @@ jobs:
         run: |
           nix run nixpkgs#statix check ./nixos
 
-  build-nixos:
-    name: build NixOS configuration
+  # ── Dynamic host discovery ────────────────────────────────────────
+
+  discover-hosts:
+    name: discover hosts
     runs-on: ubuntu-latest
+    outputs:
+      hosts: ${{ steps.hosts.outputs.hosts }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: cachix/install-nix-action@v30
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            accept-flake-config = true
+
+      - name: Discover nixosConfigurations
+        id: hosts
+        run: |
+          hosts=$(nix eval ./nixos#nixosConfigurations --apply 'x: builtins.attrNames x' --json)
+          echo "Discovered hosts: $hosts"
+          echo "hosts=$hosts" >> "$GITHUB_OUTPUT"
+
+  # ── Per-host builds (matrix over discovered hosts) ────────────────
+
+  build-nixos:
+    name: build NixOS → ${{ matrix.host }}
+    needs: discover-hosts
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        host: ${{ fromJson(needs.discover-hosts.outputs.hosts) }}
     steps:
       - uses: actions/checkout@v4
 
@@ -95,14 +126,19 @@ jobs:
           authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
           extraPullNames: ""
 
-      - name: Build NixOS system
+      - name: Build NixOS toplevel
         run: |
-          nix build ./nixos#nixosConfigurations.legion.config.system.build.toplevel \
+          nix build "./nixos#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel" \
             --print-build-logs
 
   build-home-manager:
-    name: build home-manager activation
+    name: build HM → ${{ matrix.host }}
+    needs: discover-hosts
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        host: ${{ fromJson(needs.discover-hosts.outputs.hosts) }}
     steps:
       - uses: actions/checkout@v4
 
@@ -119,10 +155,19 @@ jobs:
           authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
           extraPullNames: ""
 
-      - name: Build home-manager generation
+      - name: Build all home-manager users for this host
         run: |
-          nix build ./nixos#nixosConfigurations.legion.config.home-manager.users.legion.home.activationPackage \
-            --print-build-logs
+          users=$(nix eval "./nixos#nixosConfigurations.${{ matrix.host }}.config.home-manager.users" \
+            --apply 'x: builtins.attrNames x' --json | jq -r '.[]')
+          for user in $users; do
+            echo "::group::Building home-manager for $user@${{ matrix.host }}"
+            nix build \
+              "./nixos#nixosConfigurations.${{ matrix.host }}.config.home-manager.users.$user.home.activationPackage" \
+              --print-build-logs
+            echo "::endgroup::"
+          done
+
+  # ── Devshells & evaluation (unchanged, but dynamic where possible) ──
 
   devshell:
     name: build default devshell

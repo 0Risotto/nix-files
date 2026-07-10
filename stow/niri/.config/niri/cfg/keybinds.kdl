@@ -7,7 +7,7 @@ binds {
     Mod+C                           {spawn "code";}
     Mod+X                          hotkey-overlay-title="Open emacs" {spawn "emacs";}
     Mod+T                          hotkey-overlay-title="Open Terminal: Kitty" { spawn "kitty"; }
-    Mod+A                          hotkey-overlay-title="Open App Launcher: noctalia launcher" { spawn-sh "noctalia msg panel-toggle launcher"; }
+    Mod+A                          hotkey-overlay-title="Open App Launcher" { spawn-sh "vicinae open"; }
     Mod+F                          hotkey-overlay-title="Open Browser: Firefox" { spawn "firefox"; }
     Mod+L                          hotkey-overlay-title="Lock Screen: noctalia lock" { spawn-sh "noctalia msg session lock"; }
     Mod+Shift+L                    hotkey-overlay-title="Session Menu: noctalia sessionMenu" { spawn-sh "noctalia msg panel-toggle session"; }
@@ -37,7 +37,7 @@ binds {
 
     // ─── Window Movement and Focus ───
     Mod+Q                               { close-window; }
-    Mod+Shift+K                         { spawn "sh" "-c" "kill $(niri msg pick-window | grep 'PID:' | awk '{print $2}')"; }
+    Mod+Shift+K                         { spawn "sh" "-c" "~/.config/niri/scripts/forcekill.sh"; }
     Mod+Left                            { focus-column-left; }
     Mod+Right                           { focus-column-right; }
     Mod+Up                              { focus-window-up; }
@@ -117,7 +117,7 @@ binds {
     // ─── Screenshots ───
     Mod+Shift+S                        { spawn-sh "noctalia msg screenshot-region"; }
     Mod+Shift+Q                         {spawn-sh "~/.config/niri/scripts/qrimagescanner.sh";}
-    Mod+Shift+A                        {spawn-sh "~/.config/hypr/hyprland/scripts/snip_to_search.sh";}
+    // Mod+Shift+A — snip_to_search (was Hyprland leftover; add back with niri-compatible script)
 
     // ─── Emergency Escape Key ───
     Mod+ESCAPE                          allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }

@@ -7,8 +7,10 @@
     neovim
 
     # Communication
-    discord
-
+    signal-desktop
+    (discord.override {
+      withVencord = true;
+    })
     # Terminal tools
     git
     nodejs
@@ -18,6 +20,7 @@
     eza
     bat
     fastfetch
+    herdr
 
     # Entertainment
     spotify
@@ -32,6 +35,7 @@
     gamemode
     heroic
     lutris
+    pcsx2
 
     # Productivity
     obsidian
