@@ -25,6 +25,11 @@ filesystems=$(awk '/^[[:space:]]*fileSystems/,/^[[:space:]]*swapDevices/' "$HW" 
 
 # ── Generate hosts/legion.nix ────────────────────────────────────────
 
+echo -n "Password: "
+HASHED=$(mkpasswd)
+HASHED="${HASHED//$/\$}"
+echo
+
 HOST_FILE="$REPO_DIR/nixos/hosts/legion.nix"
 
 cat > "$HOST_FILE" << NIXEOF
@@ -68,6 +73,8 @@ $(echo "$filesystems" | sed 's/^/      /')
           };
         };
       };
+
+      users.users.legion.hashedPassword = "$HASHED";
     };
 }
 NIXEOF
