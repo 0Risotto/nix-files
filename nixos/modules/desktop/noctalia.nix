@@ -6,6 +6,11 @@
       imports = [ inputs.noctalia.nixosModules.default ];
 
       config = lib.mkIf config.settings.noctalia {
+        programs.noctalia = {
+          enable = true;
+          recommendedServices.enable = true;
+        };
+
         nix.settings = {
           extra-substituters = [ "https://noctalia.cachix.org" ];
           extra-trusted-public-keys = [

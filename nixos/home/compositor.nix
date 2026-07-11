@@ -1,16 +1,12 @@
-{ pkgs, inputs, ... }:
+{ pkgs, ... }:
 
 {
-  home.packages = [
-    inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default
-  ]
-  ++ (with pkgs; [
+  home.packages = with pkgs; [
     kitty
     nautilus
     vicinae
     wl-clipboard
     grim
     slurp
-  ]);
-
+  ];
 }

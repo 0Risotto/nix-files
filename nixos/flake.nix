@@ -15,7 +15,7 @@
     nixos-hardware.url = "github:NixOS/nixos-hardware";
 
     zen-browser.url = "github:youwen5/zen-browser-flake";
-    noctalia.url = "github:noctalia-dev/noctalia";
+    noctalia.url = "github:noctalia-dev/noctalia/cachix";
 
     treefmt-nix = {
       url = "github:numtide/treefmt-nix";
