@@ -56,7 +56,6 @@
         users = {
           legion = {
             isAdmin = true;
-            homeModule = ../home/legion.nix;
           };
         };
       };

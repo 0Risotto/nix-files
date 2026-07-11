@@ -133,8 +133,9 @@ _: {
                 description = "Whether user gets wheel + networkmanager groups";
               };
               homeModule = lib.mkOption {
-                type = lib.types.path;
-                description = "Path to user's home-manager config";
+                type = lib.types.nullOr lib.types.path;
+                default = null;
+                description = "Path to user's home-manager config (optional)";
               };
             };
           }
