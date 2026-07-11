@@ -8,6 +8,7 @@
   imports = [
     ./home/packages.nix
     ./home/compositor.nix
+    ./home/gtk.nix
   ];
 
   home.sessionPath = [

@@ -21,10 +21,8 @@ _: {
     };
 
     environment.systemPackages = with pkgs; [
-      flat-remix-gtk
       flat-remix-icon-theme
       bibata-cursors
-      nwg-look
     ];
   };
 }
