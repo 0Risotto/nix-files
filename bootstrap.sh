@@ -65,7 +65,6 @@ $(echo "$filesystems" | sed 's/^/      /')
         users = {
           legion = {
             isAdmin = true;
-            homeModule = ../home/legion.nix;
           };
         };
       };
@@ -75,14 +74,21 @@ NIXEOF
 
 echo "✔ Generated nixos/hosts/legion.nix"
 echo ""
+
+FLAKE_DIR="$REPO_DIR/nixos"
+cd "$FLAKE_DIR"
+
 echo "  ═══════════════════════════════════════════════"
-echo "  First build — flakes not enabled yet on this"
-echo "  system, so pass experimental features once:"
+echo "  Build 1/2 — enable flakes (one-time flag)"
 echo "  ═══════════════════════════════════════════════"
+sudo nixos-rebuild switch --flake ".#legion" --option experimental-features "nix-command flakes"
+
 echo ""
-echo "    sudo nixos-rebuild switch \\"
-echo "      --flake $REPO_DIR/nixos#legion \\"
-echo "      --option experimental-features 'nix-command flakes'"
+echo "  ═══════════════════════════════════════════════"
+echo "  Build 2/2 — flakes now native, finalize"
+echo "  ═══════════════════════════════════════════════"
+sudo nixos-rebuild switch --flake ".#legion"
+
 echo ""
-echo "  After that, just:"
+echo "  ✔ Bootstrap complete. After this, just run:"
 echo "    nh os switch"
