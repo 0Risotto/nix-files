@@ -49,17 +49,22 @@ _: {
       i18n = {
         defaultLocale = config.settings.locale;
         extraLocaleSettings = builtins.listToAttrs (
-          map (k: { name = k; value = config.settings.locale; }) [
-            "LC_ADDRESS"
-            "LC_IDENTIFICATION"
-            "LC_MEASUREMENT"
-            "LC_MONETARY"
-            "LC_NAME"
-            "LC_NUMERIC"
-            "LC_PAPER"
-            "LC_TELEPHONE"
-            "LC_TIME"
-          ]
+          map
+            (k: {
+              name = k;
+              value = config.settings.locale;
+            })
+            [
+              "LC_ADDRESS"
+              "LC_IDENTIFICATION"
+              "LC_MEASUREMENT"
+              "LC_MONETARY"
+              "LC_NAME"
+              "LC_NUMERIC"
+              "LC_PAPER"
+              "LC_TELEPHONE"
+              "LC_TIME"
+            ]
         );
       };
 

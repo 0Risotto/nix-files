@@ -8,9 +8,7 @@
       useUserPackages = true;
 
       users = lib.mapAttrs (name: cfg: { ... }: {
-        imports =
-          lib.optional (cfg.homeModule != null) cfg.homeModule
-          ++ [ ../../home.nix ];
+        imports = lib.optional (cfg.homeModule != null) cfg.homeModule ++ [ ../../home.nix ];
         home = {
           username = name;
           homeDirectory = "/home/${name}";

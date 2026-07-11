@@ -16,45 +16,42 @@ let
       # All feature modules except settings/default/home/hosts and host names
       allNames = builtins.attrNames self.nixosModules;
       featureNames = builtins.filter (
-        n:
-        n != "settings" && n != "default" && n != "home" && n != "hosts"
-        && !builtins.elem n hostNames
+        n: n != "settings" && n != "default" && n != "home" && n != "hosts" && !builtins.elem n hostNames
       ) allNames;
     in
     {
       inherit name;
       value = inputs.nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs self; };
-        modules =
-          [
-            self.nixosModules.settings
-            self.nixosModules.default
-            self.nixosModules.${name}
-            self.nixosModules.home
-          ]
-          ++ map (n: self.nixosModules.${n}) featureNames;
-      };
-    };
-  mkHomeConfig =
-    name:
-    {
-      inherit name;
-      value = inputs.home-manager.lib.homeManagerConfiguration {
-        pkgs = import inputs.nixpkgs {
-          system = "x86_64-linux";
-          config.allowUnfree = true;
-        };
         modules = [
-          {
-            home.username = name;
-            home.homeDirectory = "/home/${name}";
-            home.stateVersion = "26.05";
-          }
-          ../../home.nix
-        ];
-        extraSpecialArgs = { inherit inputs; };
+          self.nixosModules.settings
+          self.nixosModules.default
+          self.nixosModules.${name}
+          self.nixosModules.home
+        ]
+        ++ map (n: self.nixosModules.${n}) featureNames;
       };
     };
+  mkHomeConfig = name: {
+    inherit name;
+    value = inputs.home-manager.lib.homeManagerConfiguration {
+      pkgs = import inputs.nixpkgs {
+        system = "x86_64-linux";
+        config.allowUnfree = true;
+      };
+      modules = [
+        {
+          home = {
+            username = name;
+            homeDirectory = "/home/${name}";
+            stateVersion = "26.05";
+          };
+        }
+        ../../home.nix
+      ];
+      extraSpecialArgs = { inherit inputs; };
+    };
+  };
 in
 {
   flake = {

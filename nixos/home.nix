@@ -1,7 +1,7 @@
 # Standalone home-manager entry point.
 # username / homeDirectory / stateVersion are set by the caller
 # (NixOS: services/home-manager.nix; standalone: flake.nix inline module).
-{ config, pkgs, inputs, ... }:
+{ ... }:
 {
   programs.home-manager.enable = true;
 

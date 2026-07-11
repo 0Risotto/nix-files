@@ -39,9 +39,13 @@
     inputs.flake-parts.lib.mkFlake { inherit inputs; } {
       systems = [ "x86_64-linux" ];
 
-      imports = importTree ./modules ++ importTree ./devshells ++ importTree ./hosts ++ [
-        inputs.treefmt-nix.flakeModule
-      ];
+      imports =
+        importTree ./modules
+        ++ importTree ./devshells
+        ++ importTree ./hosts
+        ++ [
+          inputs.treefmt-nix.flakeModule
+        ];
 
       perSystem = { pkgs, ... }: {
         treefmt.config = {
@@ -57,7 +61,6 @@
           };
         };
       };
-
 
     };
 }

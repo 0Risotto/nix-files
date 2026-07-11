@@ -1,5 +1,4 @@
-{ ... }:
-{
+_: {
   flake.nixosModules.kvm =
     {
       config,
@@ -20,7 +19,7 @@
         enable = true;
       };
 
-      users.users = lib.mapAttrs (name: _: {
+      users.users = lib.mapAttrs (_name: _: {
         extraGroups = lib.mkIf cfg [ "libvirtd" ];
       }) config.settings.users;
     };
