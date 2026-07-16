@@ -32,26 +32,32 @@ let
         ++ map (n: self.nixosModules.${n}) featureNames;
       };
     };
-  mkHomeConfig = name: {
-    inherit name;
-    value = inputs.home-manager.lib.homeManagerConfiguration {
-      pkgs = import inputs.nixpkgs {
-        system = "x86_64-linux";
-        config.allowUnfree = true;
+  mkHomeConfig =
+    name:
+    let
+      settings = self.hostSettings.${name} or { };
+      username = settings.username or name;
+      homeDirectory = settings.homeDirectory or "/home/${username}";
+    in
+    {
+      inherit name;
+      value = inputs.home-manager.lib.homeManagerConfiguration {
+        pkgs = import inputs.nixpkgs {
+          system = "x86_64-linux";
+          config.allowUnfree = true;
+        };
+        modules = [
+          {
+            home = {
+              inherit username homeDirectory;
+              stateVersion = "26.05";
+            };
+          }
+          ../../home.nix
+        ];
+        extraSpecialArgs = { inherit inputs; };
       };
-      modules = [
-        {
-          home = {
-            username = name;
-            homeDirectory = "/home/${name}";
-            stateVersion = "26.05";
-          };
-        }
-        ../../home.nix
-      ];
-      extraSpecialArgs = { inherit inputs; };
     };
-  };
 in
 {
   flake = {

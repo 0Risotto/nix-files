@@ -6,6 +6,16 @@ _: {
         description = "Machine's hostname";
       };
 
+      username = lib.mkOption {
+        type = lib.types.str;
+        description = "Primary username for this machine";
+      };
+
+      homeDirectory = lib.mkOption {
+        type = lib.types.str;
+        description = "Home directory path for the primary user";
+      };
+
       timezone = lib.mkOption {
         type = lib.types.str;
         default = "UTC";
@@ -102,6 +112,11 @@ _: {
         type = lib.types.bool;
         default = true;
         description = "Enable nh (Nix CLI helper) with system-level flake vars";
+      };
+
+      flakeDir = lib.mkOption {
+        type = lib.types.str;
+        description = "Absolute path to the nixos flake directory (for nh, etc.)";
       };
 
       efi = lib.mkOption {

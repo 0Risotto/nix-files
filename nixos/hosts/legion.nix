@@ -1,4 +1,20 @@
 # hosts/legion.nix
+{ ... }:
+let
+  hostSettings = {
+    hostname = "legion";
+    username = "legion";
+    timezone = "Asia/Amman";
+    stateVersion = "26.05";
+    nvidia = true;
+    displayManager = true;
+    niri = true;
+    noctalia = true;
+    flatpak = true;
+    kvm = true;
+    efi.secureBoot = true;
+  };
+in
 {
   flake.nixosModules.legion =
     {
@@ -52,22 +68,8 @@
       swapDevices = [ ];
       nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
 
-      settings = {
-        hostname = "legion";
-        timezone = "Asia/Amman";
-        stateVersion = "26.05";
-        nvidia = true;
-        displayManager = true;
-        niri = true;
-        noctalia = true;
-        flatpak = true;
-        kvm = true;
-        efi.secureBoot = true;
-        users = {
-          legion = {
-            isAdmin = true;
-          };
-        };
-      };
+      settings = hostSettings;
     };
+
+  flake.hostSettings.legion = hostSettings;
 }

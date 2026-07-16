@@ -8,6 +8,7 @@ _: {
     }:
     let
       cfg = config.settings.kvm;
+      allUsers = lib.unique ([ config.settings.username ] ++ builtins.attrNames config.settings.users);
     in
     {
       virtualisation.libvirtd = lib.mkIf cfg {
@@ -19,8 +20,8 @@ _: {
         enable = true;
       };
 
-      users.users = lib.mapAttrs (_name: _: {
+      users.users = lib.genAttrs allUsers (_: {
         extraGroups = lib.mkIf cfg [ "libvirtd" ];
-      }) config.settings.users;
+      });
     };
 }

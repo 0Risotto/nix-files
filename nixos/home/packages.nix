@@ -27,7 +27,7 @@
 
     # Media
     vlc
-    deluge
+    qbittorrent
 
     # Gaming
     steam
@@ -45,6 +45,7 @@
 
     # AI
     pi-coding-agent
+    opencode
 
     #Virtual Machine
     gnome-boxes

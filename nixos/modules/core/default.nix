@@ -7,14 +7,25 @@ _: {
       lib,
       ...
     }:
+    let
+      primaryUser = config.settings.username;
+      extraUsers = lib.filterAttrs (name: _: name != primaryUser) config.settings.users;
+    in
     {
-      users.users = lib.mapAttrs (name: cfg: {
+      users.users = {
+        ${primaryUser} = {
+          isNormalUser = true;
+          description = primaryUser;
+          extraGroups = [ "wheel" ] ++ lib.optionals config.settings.networking [ "networkmanager" ];
+        };
+      }
+      // lib.mapAttrs (name: cfg: {
         isNormalUser = true;
         description = name;
         extraGroups = lib.optionals cfg.isAdmin (
           [ "wheel" ] ++ lib.optionals config.settings.networking [ "networkmanager" ]
         );
-      }) config.settings.users;
+      }) extraUsers;
 
       boot.kernelPackages = pkgs.linuxPackages_latest;
 
@@ -45,6 +56,9 @@ _: {
       ];
 
       system.stateVersion = config.settings.stateVersion;
+
+      settings.homeDirectory = lib.mkDefault "/home/${config.settings.username}";
+      settings.flakeDir = lib.mkDefault "${config.settings.homeDirectory}/git/dotties/nixos";
 
       i18n = {
         defaultLocale = config.settings.locale;
