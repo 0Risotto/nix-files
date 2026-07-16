@@ -1,5 +1,5 @@
 # hosts/legion.nix
-{ ... }:
+_:
 let
   hostSettings = {
     hostname = "legion";
