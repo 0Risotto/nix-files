@@ -1,7 +1,6 @@
 {
   config,
   pkgs,
-  inputs,
   ...
 }:
 {
@@ -35,13 +34,5 @@
     };
 
     font.name = "Adwaita Sans 11";
-
-    gtk4.extraCss =
-      let
-        noctaliaTheme = inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default;
-      in
-      ''
-        @import url("${noctaliaTheme}/share/themes/Noctalia/gtk-4.0/gtk.css");
-      '';
   };
 }
