@@ -16,7 +16,6 @@
     nodejs
     pnpm
     gh
-    starship
     eza
     bat
     fastfetch
