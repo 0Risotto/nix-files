@@ -17,6 +17,8 @@
     zen-browser.url = "github:youwen5/zen-browser-flake";
     noctalia.url = "github:noctalia-dev/noctalia/cachix";
 
+    nix-wrapper-modules.url = "github:BirdeeHub/nix-wrapper-modules";
+
     treefmt-nix = {
       url = "github:numtide/treefmt-nix";
       inputs.nixpkgs.follows = "nixpkgs";
