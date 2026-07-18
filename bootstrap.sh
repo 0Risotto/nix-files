@@ -3,16 +3,13 @@ set -euo pipefail
 
 REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
 
-echo "[1/6] Stowing dotfiles..."
-"$REPO_DIR/stow.sh"
-
 if [ ! -f /etc/nixos/hardware-configuration.nix ]; then
   echo "Error: /etc/nixos/hardware-configuration.nix not found."
   echo "  Run 'nixos-generate-config' first."
   exit 1
 fi
 
-echo "[2/6] Reading hardware config..."
+echo "[1/5] Reading hardware config..."
 
 HW="/etc/nixos/hardware-configuration.nix"
 initrd_modules=$(grep "boot.initrd.availableKernelModules" "$HW" | sed 's/.*= \[//;s/\];.*//;s/^[[:space:]]*//')
@@ -20,7 +17,7 @@ kvm_modules=$(grep "boot.kernelModules" "$HW" | sed 's/.*= \[//;s/\];.*//;s/^[[:
 filesystems=$(awk '/^[[:space:]]*fileSystems/,/^[[:space:]]*swapDevices/' "$HW" \
   | head -n -2 | sed 's/^[[:space:]]*//')
 
-echo "[3/6] Gathering identity..."
+echo "[2/5] Gathering identity..."
 
 read -r -p "  Hostname [legion]: " HOSTNAME
 HOSTNAME="${HOSTNAME:-legion}"
@@ -31,7 +28,7 @@ HASHED=$(mkpasswd)
 HASHED="${HASHED//$/\$}"
 echo
 
-echo "[4/6] Writing host file..."
+echo "[3/5] Writing host file..."
 
 cat > "$REPO_DIR/nixos/hosts/${HOSTNAME}.nix" << NIXEOF
 # hosts/${HOSTNAME}.nix
@@ -68,7 +65,12 @@ in {
 
 $(echo "$filesystems" | sed 's/^/      /')
 
-      swapDevices = [ ];
+      swapDevices = [{
+        device = "/swapfile";
+        size = 8192;
+      }];
+
+      boot.zswap.enable = true;
       nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
 
       settings = hostSettings;
@@ -80,11 +82,11 @@ $(echo "$filesystems" | sed 's/^/      /')
 }
 NIXEOF
 
-echo "[5/6] Staging changes for NixOS build..."
+echo "[4/5] Staging changes for NixOS build..."
 cd "$REPO_DIR"
 git add -A
 
-echo "[6/6] Building NixOS..."
+echo "[5/5] Building NixOS..."
 cd "$REPO_DIR/nixos"
 sudo nixos-rebuild switch --flake ".#${HOSTNAME}" --option experimental-features "nix-command flakes"
 sudo nixos-rebuild switch --flake ".#${HOSTNAME}"
