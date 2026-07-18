@@ -9,7 +9,6 @@
     ./home/packages.nix
     ./home/compositor.nix
     ./home/gtk.nix
-    ./home/fish.nix
   ];
 
   home.sessionPath = [

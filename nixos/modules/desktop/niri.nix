@@ -1,6 +1,12 @@
 _: {
   flake.nixosModules.niri =
-    { config, pkgs, lib, inputs, ... }:
+    {
+      config,
+      pkgs,
+      lib,
+      inputs,
+      ...
+    }:
     let
       wrap = inputs.nix-wrapper-modules.wrappers.niri.wrap;
     in
@@ -86,7 +92,12 @@ _: {
               "/usr/lib/polkit-kde-authentication-agent-1 &"
               "noctalia"
             ];
-            "spawn-at-startup" = [ [ "vicinae" "server" ] ];
+            "spawn-at-startup" = [
+              [
+                "vicinae"
+                "server"
+              ]
+            ];
 
             # ── cursor.kdl ──
             cursor = {
@@ -192,12 +203,16 @@ _: {
             workspaces = builtins.listToAttrs (
               map (n: {
                 name = toString n;
-                value = { "open-on-output" = "HDMI-A-1"; };
+                value = {
+                  "open-on-output" = "HDMI-A-1";
+                };
               }) (lib.range 1 9)
               ++ [
                 {
                   name = "10";
-                  value = { "open-on-output" = "eDP-1"; };
+                  value = {
+                    "open-on-output" = "eDP-1";
+                  };
                 }
               ]
             );
