@@ -108,6 +108,12 @@ _: {
         description = "Enable KVM virtualization (libvirtd, virt-manager)";
       };
 
+      yubikey = lib.mkOption {
+        type = lib.types.bool;
+        default = false;
+        description = "Enable YubiKey support (pcscd, udev rules, GPG agent, ykman)";
+      };
+
       nh = lib.mkOption {
         type = lib.types.bool;
         default = true;

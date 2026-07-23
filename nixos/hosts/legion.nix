@@ -12,6 +12,7 @@ let
     noctalia = true;
     flatpak = true;
     kvm = true;
+    yubikey = true;
     efi.secureBoot = true;
   };
 in
@@ -28,16 +29,19 @@ in
         (modulesPath + "/installer/scan/not-detected.nix")
       ];
 
-      boot.initrd.availableKernelModules = [
-        "xhci_pci"
-        "thunderbolt"
-        "ahci"
-        "nvme"
-        "usbhid"
-        "usb_storage"
-        "sd_mod"
-      ];
-      boot.kernelModules = [ "kvm-intel" ];
+      boot = {
+        initrd.availableKernelModules = [
+          "xhci_pci"
+          "thunderbolt"
+          "ahci"
+          "nvme"
+          "usbhid"
+          "usb_storage"
+          "sd_mod"
+        ];
+        kernelModules = [ "kvm-intel" ];
+        zswap.enable = true;
+      };
       hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 
       fileSystems = {
@@ -65,12 +69,13 @@ in
         };
       };
 
-      swapDevices = [{
-        device = "/swapfile";
-        size = 8192;
-      }];
+      swapDevices = [
+        {
+          device = "/swapfile";
+          size = 8192;
+        }
+      ];
 
-      boot.zswap.enable = true;
       nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
 
       settings = hostSettings;
