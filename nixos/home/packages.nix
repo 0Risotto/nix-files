@@ -2,9 +2,9 @@
 {
   home.packages = with pkgs; [
     # Editors
-    vscode
     zed-editor
-    neovim
+    typst
+    tinymist
 
     # Communication
     signal-desktop
@@ -20,13 +20,16 @@
     bat
     fastfetch
     herdr
+    lazygit
 
     # Entertainment
     spotify
+    stremio-linux-shell
 
     # Media
     vlc
     qbittorrent
+    gthumb
 
     # Gaming
     steam

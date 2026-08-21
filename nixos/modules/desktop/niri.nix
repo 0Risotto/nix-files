@@ -180,6 +180,12 @@ _: {
             # ── rules.kdl ──
             "window-rules" = [
               {
+                matches = [ { "app-id" = "^kitty$"; } ];
+                "background-effect" = {
+                  blur = true;
+                };
+              }
+              {
                 "geometry-corner-radius" = 0;
                 "clip-to-geometry" = true;
               }
@@ -222,7 +228,7 @@ _: {
               # ===== Simple binds (no props on bind node) =====
               "Mod+Shift+ESCAPE"."show-hotkey-overlay" = _: { };
               "Mod+Shift+E"."spawn-sh" = "hyprpicker -a";
-              "Mod+C"."spawn" = [ "code" ];
+              "Mod+C"."spawn" = [ "codium" ];
               "Mod+I"."spawn-sh" = "noctalia msg settings-toggle";
               "Mod+N"."spawn-sh" = "noctalia msg panel-toggle control-center";
               "Mod+J"."spawn-sh" = "noctalia msg bar-toggle";

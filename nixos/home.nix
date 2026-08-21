@@ -9,6 +9,8 @@
     ./home/packages.nix
     ./home/compositor.nix
     ./home/gtk.nix
+    ./home/vscode.nix
+    ./home/emacs.nix
   ];
 
   home.sessionPath = [

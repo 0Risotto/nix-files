@@ -6,6 +6,8 @@ _: {
 
       services.xserver.videoDrivers = [ "nvidia" ];
 
+      programs.gpu-screen-recorder.enable = true;
+
       hardware.nvidia = {
         open = true;
         modesetting.enable = true;
@@ -18,7 +20,7 @@ _: {
         };
 
         nvidiaSettings = true;
-        powerManagement.enable = true;
+        powerManagement.enable = false;
       };
 
       environment.sessionVariables = {

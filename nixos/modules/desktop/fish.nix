@@ -135,6 +135,8 @@ _: {
           set -g fish_color_autosuggestion brblack
           set -g FLAKE "${config.settings.flakeDir}"
 
+          fish_add_path ~/.config/emacs/bin
+
           if test "$TERM" = xterm-kitty
             alias ssh 'kitten ssh'
           end
