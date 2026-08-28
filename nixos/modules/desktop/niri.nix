@@ -183,10 +183,11 @@ _: {
                 matches = [ { "app-id" = "^kitty$"; } ];
                 "background-effect" = {
                   blur = true;
+                  noise = 0.05;
                 };
               }
               {
-                "geometry-corner-radius" = 0;
+                "geometry-corner-radius" = 15;
                 "clip-to-geometry" = true;
               }
               {
