@@ -11,6 +11,10 @@ _: {
       wrappedFish = wrap {
         inherit pkgs;
 
+        # fish 4.x: --no-config silently enables private mode, breaking
+        # history and universal variable persistence (fish-shell#12711).
+        flags."--no-config" = false;
+
         shellAliases = {
           clear = "printf '\\033[2J\\033[3J\\033[1;1H'";
           celar = "printf '\\033[2J\\033[3J\\033[1;1H'";

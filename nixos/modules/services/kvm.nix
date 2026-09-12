@@ -13,8 +13,13 @@ _: {
     {
       virtualisation.libvirtd = lib.mkIf cfg {
         enable = true;
-        qemu.package = pkgs.qemu_kvm;
+        qemu = {
+          package = pkgs.qemu_kvm;
+          swtpm.enable = true;
+        };
       };
+
+      services.spice-vdagentd.enable = lib.mkIf cfg true;
 
       programs.virt-manager = lib.mkIf cfg {
         enable = true;

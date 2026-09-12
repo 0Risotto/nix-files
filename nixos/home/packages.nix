@@ -30,7 +30,8 @@
     vlc
     qbittorrent
     gthumb
-
+    obs-studio
+    
     # Gaming
     steam
     gamescope
@@ -38,6 +39,7 @@
     heroic
     lutris
     pcsx2
+    prismlauncher
 
     # Productivity
     obsidian

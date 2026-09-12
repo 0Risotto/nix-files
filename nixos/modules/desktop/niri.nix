@@ -345,6 +345,18 @@ _: {
                 props."hotkey-overlay-title" = "File Manager: Nautilus";
                 content."spawn" = [ "nautilus" ];
               };
+              "Mod+G" = _: {
+                props."hotkey-overlay-title" = "Open Steam: gamescope";
+                content."spawn" = [
+                  "gamescope"
+                  "-W"
+                  "1920"
+                  "-H"
+                  "1080"
+                  "--"
+                  "steam"
+                ];
+              };
 
               # ── allow-when-locked ──
               "XF86AudioRaiseVolume" = _: {
