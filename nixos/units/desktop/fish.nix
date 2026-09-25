@@ -193,6 +193,6 @@ _: {
     in
     {
       environment.systemPackages = [ wrappedFish ];
-      users.users.${config.settings.username}.shell = "${wrappedFish}/bin/fish";
+      users.users.${config.my.host.username}.shell = "${wrappedFish}/bin/fish";
     };
 }

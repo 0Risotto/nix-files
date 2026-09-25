@@ -8,7 +8,7 @@
       ...
     }:
     let
-      inherit (config.settings.efi) secureBoot canTouchEfiVariables;
+      inherit (config.my.host.efi) secureBoot canTouchEfiVariables;
     in
     {
       # Import unconditionally, use mkIf to control effects

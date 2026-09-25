@@ -3,9 +3,10 @@
   flake.nixosModules.home =
     { config, lib, ... }:
     let
-      primaryUser = config.settings.username;
-      primaryCfg = config.settings.users.${primaryUser} or { homeModule = null; };
-      extraUsers = lib.filterAttrs (name: _: name != primaryUser) config.settings.users;
+      host = config.my.host;
+      primaryUser = host.username;
+      primaryCfg = host.users.${primaryUser} or { homeModule = null; };
+      extraUsers = lib.filterAttrs (name: _: name != primaryUser) host.users;
     in
     {
       imports = [ inputs.home-manager.nixosModules.home-manager ];
@@ -21,9 +22,7 @@
               ../home/base.nix
             ];
             home = {
-              username = config.settings.username;
-              homeDirectory = config.settings.homeDirectory;
-              stateVersion = config.settings.stateVersion;
+              inherit (host) username homeDirectory stateVersion;
             };
             programs.home-manager.enable = true;
           };
@@ -33,14 +32,14 @@
           home = {
             username = name;
             homeDirectory = "/home/${name}";
-            stateVersion = config.settings.stateVersion;
+            inherit (host) stateVersion;
           };
           programs.home-manager.enable = true;
         }) extraUsers;
 
         extraSpecialArgs = {
           inherit inputs;
-          inherit (config) settings;
+          inherit (config) settings my;
         };
       };
     };

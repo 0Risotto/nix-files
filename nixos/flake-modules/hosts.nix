@@ -35,9 +35,8 @@ let
   mkHomeConfig =
     name:
     let
+      facts = import (../constants/hosts + "/${name}.nix");
       settings = self.hostSettings.${name} or { };
-      username = settings.username or name;
-      homeDirectory = settings.homeDirectory or "/home/${username}";
     in
     {
       inherit name;
@@ -49,13 +48,18 @@ let
         modules = [
           {
             home = {
-              inherit username homeDirectory;
-              stateVersion = "26.05";
+              inherit (facts) username homeDirectory stateVersion;
             };
           }
           ../units/home/base.nix
         ];
-        extraSpecialArgs = { inherit inputs settings; };
+        extraSpecialArgs = {
+          inherit inputs settings;
+          my = {
+            constants = import ../constants/shared.nix;
+            host = facts;
+          };
+        };
       };
     };
 in

@@ -1,11 +1,15 @@
 {
   inputs,
   settings ? { },
+  my,
   lib,
   pkgs,
   ...
 }:
 let
+  inherit (my) constants;
+  monitors = my.host.monitors;
+
   forceKill = pkgs.writeShellApplication {
     name = "umbriel-force-kill";
     runtimeInputs = [ pkgs.jq ];
@@ -78,47 +82,32 @@ in
       };
 
       # ── outputs.kdl ──
-      output."HDMI-A-1" = {
-        mode = "1920x1080@200";
-        position = [
-          0
-          0
-        ];
-        workspaces = [
-          "1"
-          "2"
-          "3"
-          "4"
-          "5"
-          "6"
-          "7"
-          "8"
-          "9"
-        ];
-      };
-      output."eDP-1" = {
-        position = [
-          1920
-          0
-        ];
-        workspaces = [ "10" ];
-      };
+      output = lib.mapAttrs (
+        _: monitor:
+        {
+          position = [
+            monitor.position.x
+            monitor.position.y
+          ];
+          inherit (monitor) workspaces;
+        }
+        // lib.optionalAttrs (monitor ? mode) { inherit (monitor) mode; }
+      ) monitors;
 
       workspaces.back_and_forth = true;
 
       # ── input.kdl ──
       input = {
         keyboard = {
-          layout = "us,ara";
-          options = "grp:alts_toggle";
+          inherit (constants.keyboard.compositor) layout options;
         };
         touchpad = {
           tap = true;
           natural_scroll = true;
         };
         cursor = {
-          theme = "Bibata-Modern-Classic";
-          size = 24;
+          theme = constants.theme.cursor.name;
+          size = constants.theme.cursor.size;
           follows_focus = true;
         };
         focus.follows_mouse = true;
@@ -127,7 +116,7 @@ in
       # ── layout.kdl ──
       layout = {
         mode = "scrolling";
-        gap = 5;
+        gap = constants.theme.compositor.gap;
         width_presets = [
           0.33333
           0.5
@@ -143,7 +132,7 @@ in
       # ── misc.kdl ──
       appearance = {
         prefer_no_csd = true;
-        corner_radius = 18;
+        corner_radius = constants.theme.compositor.umbriel.cornerRadius;
         #  blur = {
         #    enabled = true;
         #    optimized = true;
@@ -161,7 +150,7 @@ in
       window_rule = [
         # transparent, blurred windows; later rules can override parts of it
         {
-          opacity = 0.91;
+          opacity = constants.theme.compositor.windowOpacity;
           blur = true;
           blur_popups = true;
           blur_optimized = true;

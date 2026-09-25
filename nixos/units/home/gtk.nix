@@ -1,8 +1,12 @@
 {
   config,
+  my,
   pkgs,
   ...
 }:
+let
+  theme = my.constants.theme;
+in
 {
   dconf.enable = true;
 
@@ -19,20 +23,20 @@
     enable = true;
 
     theme = {
-      name = "Adwaita-dark";
+      name = theme.gtk.theme;
     };
 
     iconTheme = {
-      name = "Flat-Remix-Blue-Dark";
+      name = theme.icons.name;
       package = pkgs.flat-remix-icon-theme;
     };
 
     cursorTheme = {
-      name = "Bibata-Modern-Classic";
+      name = theme.cursor.name;
       package = pkgs.bibata-cursors;
-      size = 24;
+      size = theme.cursor.size;
     };
 
-    font.name = "Adwaita Sans 11";
+    font.name = theme.fonts.gtk;
   };
 }

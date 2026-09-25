@@ -1,4 +1,8 @@
-{ pkgs, ... }:
+{
+  my,
+  pkgs,
+  ...
+}:
 let
   kanagawa = pkgs.vscode-utils.extensionFromVscodeMarketplace {
     name = "kanagawa";
@@ -23,7 +27,7 @@ in
         "window.titleBarStyle" = "custom";
         "workbench.colorTheme" = "Kanagawa";
         "workbench.iconTheme" = "material-icon-theme";
-        "editor.fontFamily" = "'JetBrains Mono', 'monospace', monospace";
+        "editor.fontFamily" = "'${my.constants.theme.fonts.editor}', 'monospace', monospace";
         "editor.fontSize" = 14;
         "editor.fontLigatures" = true;
         "tinymist.serverPath" = "${pkgs.tinymist}/bin/tinymist";

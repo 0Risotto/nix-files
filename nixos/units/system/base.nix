@@ -1,15 +1,16 @@
-# units/system/base.nix — core system: kernel, users, locale, networking, nix settings
+# units/system/base.nix — core system: users, locale, networking, nix settings
 _: {
   flake.nixosModules.base =
     {
       config,
-      pkgs,
       lib,
       ...
     }:
     let
-      primaryUser = config.settings.username;
-      extraUsers = lib.filterAttrs (name: _: name != primaryUser) config.settings.users;
+      host = config.my.host;
+      constants = config.my.constants;
+      primaryUser = host.username;
+      extraUsers = lib.filterAttrs (name: _: name != primaryUser) host.users;
     in
     {
       users.users = {
@@ -27,10 +28,8 @@ _: {
         );
       }) extraUsers;
 
-      boot.kernelPackages = pkgs.linuxPackages_latest;
-
       networking = {
-        hostName = config.settings.hostname;
+        hostName = host.hostname;
         networkmanager.enable = config.settings.networking;
       };
 
@@ -42,10 +41,7 @@ _: {
         power-profiles-daemon.enable = true;
         upower.enable = true;
         printing.enable = config.settings.printing;
-        xserver.xkb = {
-          layout = "us";
-          variant = "";
-        };
+        xserver.xkb = constants.keyboard.xkb;
       };
 
       hardware.graphics.enable = true;
@@ -56,18 +52,17 @@ _: {
         "flakes"
       ];
 
-      system.stateVersion = config.settings.stateVersion;
+      system.stateVersion = host.stateVersion;
 
-      settings.homeDirectory = lib.mkDefault "/home/${config.settings.username}";
-      settings.flakeDir = lib.mkDefault "${config.settings.homeDirectory}/git/dotties/nixos";
+      settings.flakeDir = lib.mkDefault "${host.homeDirectory}/${constants.identity.flakeSubpath}";
 
       i18n = {
-        defaultLocale = config.settings.locale;
+        defaultLocale = host.locale;
         extraLocaleSettings = builtins.listToAttrs (
           map
             (k: {
               name = k;
-              value = config.settings.locale;
+              value = host.locale;
             })
             [
               "LC_ADDRESS"
@@ -83,6 +78,6 @@ _: {
         );
       };
 
-      time.timeZone = config.settings.timezone;
+      time.timeZone = host.timezone;
     };
 }

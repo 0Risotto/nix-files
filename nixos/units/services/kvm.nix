@@ -8,7 +8,7 @@ _: {
     }:
     let
       cfg = config.settings.kvm;
-      allUsers = lib.unique ([ config.settings.username ] ++ builtins.attrNames config.settings.users);
+      allUsers = lib.unique ([ config.my.host.username ] ++ builtins.attrNames config.my.host.users);
     in
     {
       virtualisation.libvirtd = lib.mkIf cfg {

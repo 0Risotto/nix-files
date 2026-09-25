@@ -1,4 +1,5 @@
-{ inputs, ... }: {
+{ inputs, ... }:
+{
   flake.nixosModules.kitty =
     {
       pkgs,
@@ -7,6 +8,7 @@
     }:
     let
       wrap = inputs.nix-wrapper-modules.wrappers.kitty.wrap;
+      constants = config.my.constants;
     in
     {
       environment.systemPackages = [
@@ -14,18 +16,18 @@
           inherit pkgs;
 
           font = {
-            name = "JetBrains Mono Nerd Font";
+            name = constants.theme.fonts.terminal;
             size = 11.0;
           };
 
           settings = {
-            background_opacity = 0.95;
-            background_blur = 4;
+            background_opacity = constants.theme.kitty.opacity;
+            background_blur = constants.theme.kitty.backgroundBlur;
             confirm_os_window_close = 0;
             cursor_shape = "beam";
             cursor_trail = 1;
             shell = "herdr";
-            window_margin_width = 11;
+            window_margin_width = constants.theme.kitty.windowMargin;
           };
 
           keybindings = {
@@ -43,7 +45,7 @@
           };
 
           extraConfig = ''
-            include ${config.settings.homeDirectory}/.config/kitty/themes/noctalia.conf
+            include ${config.my.host.homeDirectory}/.config/kitty/themes/noctalia.conf
           '';
         })
       ];

@@ -9,6 +9,8 @@ _: {
     }:
     let
       wrap = inputs.nix-wrapper-modules.wrappers.niri.wrap;
+      constants = config.my.constants;
+      monitors = config.my.host.monitors;
     in
     lib.mkIf config.settings.niri {
       programs.niri = {
@@ -101,34 +103,27 @@ _: {
 
             # ── cursor.kdl ──
             cursor = {
-              "xcursor-theme" = "Bibata-Modern-Classic";
-              "xcursor-size" = 24;
+              "xcursor-theme" = constants.theme.cursor.name;
+              "xcursor-size" = constants.theme.cursor.size;
             };
 
             # ── display.kdl ──
-            outputs."HDMI-A-1" = {
-              position = _: {
-                props = {
-                  x = 0;
-                  y = 0;
+            outputs = lib.mapAttrs (
+              _: monitor:
+              {
+                position = _: {
+                  props = {
+                    inherit (monitor.position) x y;
+                  };
                 };
-              };
-              mode = "1920x1080@200";
-            };
-            outputs."eDP-1" = {
-              position = _: {
-                props = {
-                  x = 1920;
-                  y = 0;
-                };
-              };
-            };
+              }
+              // lib.optionalAttrs (monitor ? mode) { inherit (monitor) mode; }
+            ) monitors;
 
             # ── input.kdl ──
             input = {
               "keyboard"."xkb" = {
-                layout = "us,ara";
-                options = "grp:alts_toggle";
+                inherit (constants.keyboard.compositor) layout options;
               };
               touchpad = {
                 tap = _: { };
@@ -145,7 +140,7 @@ _: {
 
             # ── layout.kdl ──
             layout = {
-              gaps = 5;
+              gaps = constants.theme.compositor.gap;
               "center-focused-column" = "never";
               "background-color" = "transparent";
               "preset-column-widths" = [
@@ -187,7 +182,7 @@ _: {
                 };
               }
               {
-                "geometry-corner-radius" = 15;
+                "geometry-corner-radius" = constants.theme.compositor.niri.cornerRadius;
                 "clip-to-geometry" = true;
               }
               {
@@ -208,20 +203,17 @@ _: {
 
             # ── workspaces.kdl ──
             workspaces = builtins.listToAttrs (
-              map (n: {
-                name = toString n;
-                value = {
-                  "open-on-output" = "HDMI-A-1";
-                };
-              }) (lib.range 1 9)
-              ++ [
-                {
-                  name = "10";
-                  value = {
-                    "open-on-output" = "eDP-1";
-                  };
-                }
-              ]
+              lib.concatLists (
+                lib.mapAttrsToList (
+                  name: monitor:
+                  map (workspace: {
+                    name = workspace;
+                    value = {
+                      "open-on-output" = name;
+                    };
+                  }) monitor.workspaces
+                ) monitors
+              )
             );
 
             # ── keybinds.kdl ──
@@ -440,7 +432,7 @@ _: {
             {
               include = [
                 { optional = true; }
-                "${config.settings.homeDirectory}/.config/niri/noctalia.kdl"
+                "${config.my.host.homeDirectory}/.config/niri/noctalia.kdl"
               ];
             }
           ];

@@ -1,7 +1,7 @@
-# Standalone home-manager entry point.
+# Home-manager base unit: session, xdg dirs, home-manager itself.
 # username / homeDirectory / stateVersion are set by the caller
-# (NixOS: services/home-manager.nix; standalone: flake.nix inline module).
-{ ... }:
+# (NixOS: units/system/home-manager.nix; standalone: flake-modules/hosts.nix).
+{ my, ... }:
 {
   programs.home-manager.enable = true;
 
@@ -14,17 +14,9 @@
     ./emacs.nix
   ];
 
-  home.sessionPath = [
-    "$HOME/.local/bin"
-    "$HOME/.npm-global/bin"
-  ];
+  home.sessionPath = my.constants.session.path;
 
-  home.sessionVariables = {
-    EDITOR = "nvim";
-    VISUAL = "nvim";
-    PAGER = "less";
-    NIXPKGS_ALLOW_UNFREE = "1";
-  };
+  home.sessionVariables = my.constants.session.variables;
 
   xdg = {
     enable = true;
@@ -42,8 +34,4 @@
     };
     configFile."user-dirs.dirs".force = true;
   };
-
-  # Per-user state version comes from the caller.
-  # For NixOS: config.settings.stateVersion.
-  # For standalone: inline module in flake.nix.
 }
