@@ -12,6 +12,7 @@ lib.mkIf config.my.hardware.nvidia {
 
   programs.gpu-screen-recorder = {
     enable = true;
+    ui.enable = true;
     # Nixpkgs' ffmpeg 9 requires NVENC API 13.1; the 595.99 driver exposes
     # 13.0. Use ffmpeg 8 so nvenc works instead of falling back to CPU.
     package = pkgs.gpu-screen-recorder.override { ffmpeg = pkgs.ffmpeg_8; };
