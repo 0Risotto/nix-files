@@ -12,5 +12,8 @@
     herdr
     lazygit
     just
+    fzf
+    zoxide
+    atuin
   ];
 }
