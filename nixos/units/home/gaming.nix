@@ -1,10 +1,9 @@
-# units/home/gaming.nix — gaming stack
+# units/home/gaming.nix — gaming applications
+# steam and gamemode are provided system-wide by assemblies/gaming.nix.
 { pkgs, ... }:
 {
   home.packages = with pkgs; [
-    steam
     gamescope
-    gamemode
     heroic
     lutris
     pcsx2
