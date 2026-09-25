@@ -16,6 +16,134 @@
     };
   };
 
+  # Shared bind data; compositor units adapt it to niri KDL / umbriel TOML.
+  keybinds = {
+    spawn = [
+      {
+        key = "Mod+Shift+E";
+        sh = "hyprpicker -a";
+      }
+      {
+        key = "Mod+C";
+        argv = [ "codium" ];
+      }
+      {
+        key = "Mod+I";
+        sh = "noctalia msg settings-toggle";
+      }
+      {
+        key = "Mod+N";
+        sh = "noctalia msg panel-toggle control-center";
+      }
+      {
+        key = "Mod+J";
+        sh = "noctalia msg bar-toggle";
+      }
+      {
+        key = "Mod+Shift+M";
+        sh = "noctalia msg mic-mute";
+      }
+      {
+        key = "Mod+Shift+R";
+        sh = "noctalia msg config-reload";
+      }
+      {
+        key = "Mod+Ctrl+T";
+        sh = "noctalia msg panel-toggle wallpaper";
+      }
+      {
+        key = "Mod+X";
+        argv = [ "emacs" ];
+        title = "Open emacs";
+      }
+      {
+        key = "Mod+T";
+        argv = [ "kitty" ];
+        title = "Open Terminal: Kitty";
+      }
+      {
+        key = "Mod+F";
+        argv = [ "firefox" ];
+        title = "Open Browser: Firefox";
+      }
+      {
+        key = "Mod+E";
+        argv = [ "nautilus" ];
+        title = "File Manager: Nautilus";
+      }
+      {
+        key = "Mod+G";
+        argv = [
+          "gamescope"
+          "-W"
+          "1920"
+          "-H"
+          "1080"
+          "--"
+          "steam"
+        ];
+        title = "Open Steam: gamescope";
+      }
+      {
+        key = "Mod+L";
+        sh = "noctalia msg session lock";
+        title = "Lock Screen: noctalia lock";
+      }
+      {
+        key = "Mod+Shift+L";
+        sh = "noctalia msg panel-toggle session";
+        title = "Session Menu: noctalia sessionMenu";
+      }
+      {
+        key = "Mod+Shift+S";
+        sh = "noctalia msg screenshot-region";
+      }
+    ];
+
+    media = [
+      {
+        key = "XF86AudioRaiseVolume";
+        command = "noctalia msg volume-up";
+      }
+      {
+        key = "XF86AudioLowerVolume";
+        command = "noctalia msg volume-down";
+      }
+      {
+        key = "XF86AudioMute";
+        command = "noctalia msg volume-mute";
+      }
+      {
+        key = "XF86AudioMicMute";
+        command = "noctalia msg mic-mute";
+      }
+      {
+        key = "XF86AudioNext";
+        command = "noctalia msg media next";
+      }
+      {
+        key = "XF86AudioPrev";
+        command = "noctalia msg media previous";
+      }
+      {
+        key = "XF86AudioPlay";
+        command = "noctalia msg media toggle";
+      }
+      {
+        key = "XF86AudioPause";
+        command = "noctalia msg media toggle";
+      }
+      {
+        key = "XF86MonBrightnessUp";
+        command = "noctalia msg brightness-up";
+      }
+      {
+        key = "XF86MonBrightnessDown";
+        command = "noctalia msg brightness-down";
+      }
+    ];
+  };
+
   session = {
     path = [
       "$HOME/.local/bin"

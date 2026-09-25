@@ -23,6 +23,43 @@ in
           };
         };
 
+        keybinds = {
+          spawn = mkOption {
+            type = types.listOf (
+              types.submodule {
+                options = {
+                  key = mkOption { type = types.str; };
+                  sh = mkOption {
+                    type = types.nullOr types.str;
+                    default = null;
+                  };
+                  argv = mkOption {
+                    type = types.listOf types.str;
+                    default = [ ];
+                  };
+                  title = mkOption {
+                    type = types.nullOr types.str;
+                    default = null;
+                  };
+                };
+              }
+            );
+            description = "Shared application bindings (key plus shell or argv)";
+          };
+
+          media = mkOption {
+            type = types.listOf (
+              types.submodule {
+                options = {
+                  key = mkOption { type = types.str; };
+                  command = mkOption { type = types.str; };
+                };
+              }
+            );
+            description = "Shared media/brightness bindings, active when locked";
+          };
+        };
+
         session = {
           path = mkOption { type = types.listOf types.str; };
           variables = mkOption { type = types.attrsOf types.str; };
