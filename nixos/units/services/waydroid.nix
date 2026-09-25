@@ -1,5 +1,10 @@
 # units/services/waydroid.nix — Waydroid Android container with Google Play (GApps).
 #
+# GPU note: Waydroid hard-rejects the NVIDIA driver (unsupported=["nvidia"] in
+# tools/helpers/gpu.py) and falls back to swiftshader software rendering, which
+# is extremely laggy. Enable hybrid graphics in the BIOS so the Intel iGPU is
+# exposed; Waydroid then auto-selects gralloc=gbm / egl=mesa / vulkan=intel.
+#
 # Android images are not part of the Nix store. Initialize them once:
 #   sudo waydroid-init-gapps
 # Then start a session in your compositor with:

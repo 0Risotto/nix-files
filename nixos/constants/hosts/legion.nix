@@ -79,7 +79,8 @@
 
   gpu = {
     nvidiaBusId = "PCI:1:0:0";
-    intelBusId = "PCI:0:0:0";
+    # Intel UHD iGPU (i5-11400H), exposed only when BIOS uses hybrid graphics.
+    intelBusId = "PCI:0:2:0";
   };
 
   efi = {
