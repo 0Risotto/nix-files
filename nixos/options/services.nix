@@ -13,5 +13,11 @@
       default = true;
       description = "Enable nh (Nix CLI helper) with system-level flake vars";
     };
+
+    waydroid = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = "Enable Waydroid (Android container) with Google Play (GApps) images";
+    };
   };
 }

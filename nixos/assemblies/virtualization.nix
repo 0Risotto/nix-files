@@ -1,8 +1,12 @@
 # assemblies/virtualization.nix — libvirt/KVM and VM management.
 {
   nixos = {
-    imports = [ ../units/services/kvm.nix ];
+    imports = [
+      ../units/services/kvm.nix
+      ../units/services/waydroid.nix
+    ];
     my.hardware.kvm = true;
+    my.services.waydroid = true;
   };
 
   home =
