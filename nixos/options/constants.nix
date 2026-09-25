@@ -189,6 +189,10 @@ in
           type = types.attrsOf (
             types.submodule {
               options = {
+                connector = mkOption {
+                  type = types.str;
+                  description = "DRM connector name (e.g. HDMI-A-2), used by niri workspace assignment";
+                };
                 position = {
                   x = mkOption {
                     type = types.int;
@@ -211,7 +215,7 @@ in
             }
           );
           default = { };
-          description = "Outputs, keyed by connector name (e.g. HDMI-A-1)";
+          description = "Outputs, keyed by stable monitor identity (\"make model serial\", as shown by `umbriel outputs`/`niri msg outputs`); connector carries the current DRM name";
         };
 
         gpu = {

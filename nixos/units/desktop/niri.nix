@@ -245,11 +245,11 @@ lib.mkIf (builtins.elem "niri" config.my.desktop.compositors) {
         workspaces = builtins.listToAttrs (
           lib.concatLists (
             lib.mapAttrsToList (
-              name: monitor:
+              _: monitor:
               map (workspace: {
                 name = workspace;
                 value = {
-                  "open-on-output" = name;
+                  "open-on-output" = monitor.connector;
                 };
               }) monitor.workspaces
             ) monitors

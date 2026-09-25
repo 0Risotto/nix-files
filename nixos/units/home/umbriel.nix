@@ -150,7 +150,7 @@ in
       layout = {
         mode = "scrolling";
         gap = constants.theme.compositor.gap;
-        width_presets = [
+        extent_presets = [
           0.33333
           0.5
           0.66667
@@ -158,7 +158,7 @@ in
         scrolling = {
           center_focused = "never";
           center_underfull_strip = false;
-          default_width_fraction = 0.5;
+          default_extent_fraction = 0.5;
         };
       };
 
@@ -203,18 +203,18 @@ in
         {
           match.app_id = "^dev.noctalia.Noctalia$";
           default_floating = true;
-          default_size = [
-            1020
-            900
-          ];
+          default_floating_size_px = {
+            width = 1020;
+            height = 900;
+          };
         }
         {
           match.app_id = "^dev.noctalia.UmbrielSharePicker$";
           default_floating = true;
-          default_size = [
-            800
-            600
-          ];
+          default_floating_size_px = {
+            width = 800;
+            height = 600;
+          };
         }
       ];
 
@@ -332,10 +332,10 @@ in
           # ── Layout ──
           "Mod+D" = "window-toggle-maximize";
           "Mod+Ctrl+C" = "column-center";
-          "Mod+Minus" = "window-modify-width:-0.1";
-          "Mod+Equal" = "window-modify-width:0.1";
-          "Mod+Shift+Minus" = "window-modify-height:-0.1";
-          "Mod+Shift+Equal" = "window-modify-height:0.1";
+          "Mod+Minus" = "window-modify-primary-extent:-0.1";
+          "Mod+Equal" = "window-modify-primary-extent:0.1";
+          "Mod+Shift+Minus" = "window-modify-secondary-extent:-0.1";
+          "Mod+Shift+Equal" = "window-modify-secondary-extent:0.1";
           "Mod+W" = "window-toggle-fullscreen";
 
           # ── Overview ──

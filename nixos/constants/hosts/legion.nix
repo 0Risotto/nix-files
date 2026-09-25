@@ -49,8 +49,11 @@
     boot = "/dev/disk/by-uuid/5AA0-1761";
   };
 
+  # Keyed by monitor identity (stable across BIOS/GPU topology changes),
+  # `connector` is the current DRM name for niri workspace assignment.
   monitors = {
-    "HDMI-A-1" = {
+    "AOC 24G4H 204R4HA004148" = {
+      connector = "HDMI-A-2";
       mode = "1920x1080@200";
       position = {
         x = 0;
@@ -68,7 +71,8 @@
         "9"
       ];
     };
-    "eDP-1" = {
+    "AU Optronics 0xB69B Unknown" = {
+      connector = "eDP-1";
       position = {
         x = 1920;
         y = 0;
