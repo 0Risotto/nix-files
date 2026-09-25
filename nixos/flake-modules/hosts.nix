@@ -26,6 +26,7 @@ let
     ../units/hardware/efi.nix
     ../units/hardware/audio.nix
     ../units/hardware/nvidia.nix
+    ../units/hardware/intel.nix
     ../units/hardware/thermal.nix
     ../units/services/nh.nix
   ];
