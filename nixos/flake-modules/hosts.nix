@@ -39,13 +39,16 @@ let
       inherit name;
       value = inputs.nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs self; };
-        modules = baseModules ++ [
-          {
-            # Assembly home halves are shared by every user on the host.
-            home-manager.sharedModules = assemblies.baseHome ++ map (a: a.home or { }) selected;
-          }
-          (hostsDir + "/${name}.nix")
-        ];
+        modules =
+          baseModules
+          ++ map (a: a.nixos) selected
+          ++ [
+            {
+              # Assembly home halves are shared by every user on the host.
+              home-manager.sharedModules = assemblies.baseHome ++ map (a: a.home or { }) selected;
+            }
+            (hostsDir + "/${name}.nix")
+          ];
       };
     };
 
