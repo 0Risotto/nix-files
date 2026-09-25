@@ -115,7 +115,7 @@ lib.mkIf (builtins.elem "niri" config.my.desktop.compositors) {
               };
             };
           }
-              // lib.optionalAttrs (monitor.mode != null) { inherit (monitor) mode; }
+          // lib.optionalAttrs (monitor.mode != null) { inherit (monitor) mode; }
         ) monitors;
 
         # ── input.kdl ──

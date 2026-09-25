@@ -1,0 +1,39 @@
+name: update flake lock
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    name: nix flake update
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            accept-flake-config = true
+
+      - name: Update flake.lock
+        run: nix flake update
+        working-directory: nixos
+
+      - uses: peter-evans/create-pull-request@v7
+        with:
+          branch: chore/flake-update
+          delete-branch: true
+          title: "chore(nixos): weekly flake update"
+          commit-message: "chore(nixos): weekly flake update"
+          body: |
+            Automated `nix flake update` of all inputs.
+
+            CI builds every host on this PR; merge once green.

@@ -105,10 +105,12 @@ in
         };
 
         compositors = mkOption {
-          type = types.listOf (types.enum [
-            "niri"
-            "umbriel"
-          ]);
+          type = types.listOf (
+            types.enum [
+              "niri"
+              "umbriel"
+            ]
+          );
           default = [ ];
           description = "Wayland compositors to install and configure";
         };
