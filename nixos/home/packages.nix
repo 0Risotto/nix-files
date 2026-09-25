@@ -31,7 +31,7 @@
     qbittorrent
     gthumb
     obs-studio
-    
+
     # Gaming
     steam
     gamescope

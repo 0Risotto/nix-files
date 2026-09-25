@@ -90,6 +90,12 @@ _: {
         description = "Enable the Niri scrollable-tiling Wayland compositor";
       };
 
+      umbriel = lib.mkOption {
+        type = lib.types.bool;
+        default = false;
+        description = "Enable the Umbriel scrollable-tiling Wayland compositor";
+      };
+
       noctalia = lib.mkOption {
         type = lib.types.bool;
         default = false;

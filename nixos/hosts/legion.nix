@@ -9,6 +9,7 @@ let
     nvidia = true;
     displayManager = true;
     niri = true;
+    umbriel = true;
     noctalia = true;
     flatpak = true;
     kvm = true;

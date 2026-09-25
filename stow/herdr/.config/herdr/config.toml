@@ -10,8 +10,11 @@ default_shell = "fish"
 prefix = "ctrl+semicolon"
 
 [theme]
-name = "tokyo-night"
+name = "catppuccin"
 auto_switch = false
 
 [experimental]
 kitty_graphics = true
+
+[ui.toast]
+delivery = "system"

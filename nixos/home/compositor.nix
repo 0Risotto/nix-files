@@ -7,5 +7,7 @@
     wl-clipboard
     grim
     slurp
+    hyprpicker
+    zbar
   ];
 }

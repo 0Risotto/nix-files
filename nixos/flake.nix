@@ -16,6 +16,7 @@
 
     zen-browser.url = "github:youwen5/zen-browser-flake";
     noctalia.url = "github:noctalia-dev/noctalia/cachix";
+    umbriel.url = "github:noctalia-dev/umbriel";
 
     nix-wrapper-modules.url = "github:BirdeeHub/nix-wrapper-modules";
 

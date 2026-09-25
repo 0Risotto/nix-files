@@ -93,10 +93,10 @@ _: {
               "noctalia"
             ];
             "spawn-at-startup" = [
-              [
-                "vicinae"
-                "server"
-              ]
+              # [
+              #   "vicinae"
+              #   "server"
+              # ]
             ];
 
             # ── cursor.kdl ──
@@ -327,7 +327,8 @@ _: {
               };
               "Mod+A" = _: {
                 props."hotkey-overlay-title" = "Open App Launcher";
-                content."spawn-sh" = "vicinae open";
+                content."spawn-sh" = "noctalia msg panel-toggle launcher";
+                # content."spawn-sh" = "vicinae open";
               };
               "Mod+F" = _: {
                 props."hotkey-overlay-title" = "Open Browser: Firefox";

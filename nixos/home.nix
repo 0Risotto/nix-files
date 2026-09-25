@@ -8,6 +8,7 @@
   imports = [
     ./home/packages.nix
     ./home/compositor.nix
+    ./home/umbriel.nix
     ./home/gtk.nix
     ./home/vscode.nix
     ./home/emacs.nix
