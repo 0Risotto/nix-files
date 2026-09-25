@@ -1,22 +1,23 @@
-{ inputs, ... }:
 {
-  flake.nixosModules.noctalia =
-    { config, lib, ... }:
-    {
-      imports = [ inputs.noctalia.nixosModules.default ];
+  config,
+  inputs,
+  lib,
+  ...
+}:
+{
+  imports = [ inputs.noctalia.nixosModules.default ];
 
-      config = lib.mkIf config.settings.noctalia {
-        programs.noctalia = {
-          enable = true;
-          recommendedServices.enable = true;
-        };
-
-        nix.settings = {
-          extra-substituters = [ "https://noctalia.cachix.org" ];
-          extra-trusted-public-keys = [
-            "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
-          ];
-        };
-      };
+  config = lib.mkIf config.my.desktop.noctalia {
+    programs.noctalia = {
+      enable = true;
+      recommendedServices.enable = true;
     };
+
+    nix.settings = {
+      extra-substituters = [ "https://noctalia.cachix.org" ];
+      extra-trusted-public-keys = [
+        "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
+      ];
+    };
+  };
 }

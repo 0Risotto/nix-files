@@ -1,6 +1,5 @@
 {
   inputs,
-  settings ? { },
   my,
   lib,
   pkgs,
@@ -52,7 +51,7 @@ in
 {
   imports = [ inputs.umbriel.homeModules.default ];
 
-  config = lib.mkIf (settings.umbriel or false) {
+  config = lib.mkIf (builtins.elem "umbriel" my.desktop.compositors) {
     home.packages = [
       forceKill
       dpmsToggle

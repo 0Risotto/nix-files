@@ -5,15 +5,6 @@
 {
   programs.home-manager.enable = true;
 
-  imports = [
-    ./packages.nix
-    ./compositor.nix
-    ./umbriel.nix
-    ./gtk.nix
-    ./vscode.nix
-    ./emacs.nix
-  ];
-
   home.sessionPath = my.constants.session.path;
 
   home.sessionVariables = my.constants.session.variables;

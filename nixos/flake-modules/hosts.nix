@@ -1,4 +1,7 @@
-# flake-modules/hosts.nix — auto-discovers hosts/*.nix and generates nixosConfigurations
+# flake-modules/hosts.nix — discovers hosts/*.nix and builds flake outputs.
+# A host is a plain NixOS module that sets my.host; composition comes from
+# my.host.assemblies, loaded here (the composition root) to keep module
+# imports independent of config.
 { self, inputs, ... }:
 let
   hostsDir = ../hosts;
@@ -10,33 +13,47 @@ let
     in
     map (n: builtins.head (builtins.match "(.*)\\.nix" n)) nixFiles;
 
+  assemblies = import ../assemblies;
+
+  # Always-on modules: options, core system, machine hardware, base services.
+  baseModules = [
+    ../options
+    ../units/system/base.nix
+    ../units/system/apps.nix
+    ../units/system/home-manager.nix
+    ../units/hardware/kernel.nix
+    ../units/hardware/filesystems.nix
+    ../units/hardware/efi.nix
+    ../units/hardware/audio.nix
+    ../units/hardware/nvidia.nix
+    ../units/services/nh.nix
+  ];
+
   mkHost =
     name:
     let
-      # All feature modules except settings/base/home/hosts and host names
-      allNames = builtins.attrNames self.nixosModules;
-      featureNames = builtins.filter (
-        n: n != "settings" && n != "base" && n != "home" && n != "hosts" && !builtins.elem n hostNames
-      ) allNames;
+      facts = import (../constants/hosts + "/${name}.nix");
+      selected = assemblies.load (facts.assemblies or [ ]);
     in
     {
       inherit name;
       value = inputs.nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs self; };
-        modules = [
-          self.nixosModules.settings
-          self.nixosModules.base
-          self.nixosModules.${name}
-          self.nixosModules.home
-        ]
-        ++ map (n: self.nixosModules.${n}) featureNames;
+        modules = baseModules ++ [
+          {
+            # Assembly home halves are shared by every user on the host.
+            home-manager.sharedModules = assemblies.baseHome ++ map (a: a.home or { }) selected;
+          }
+          (hostsDir + "/${name}.nix")
+        ];
       };
     };
+
   mkHomeConfig =
     name:
     let
       facts = import (../constants/hosts + "/${name}.nix");
-      settings = self.hostSettings.${name} or { };
+      shared = import ../constants/shared.nix;
     in
     {
       inherit name;
@@ -46,18 +63,21 @@ let
           config.allowUnfree = true;
         };
         modules = [
-          {
-            home = {
-              inherit (facts) username homeDirectory stateVersion;
-            };
-          }
-          ../units/home/base.nix
-        ];
+          { home = { inherit (facts) username homeDirectory stateVersion; }; }
+        ]
+        ++ assemblies.baseHome
+        ++ assemblies.home (facts.assemblies or [ ]);
         extraSpecialArgs = {
-          inherit inputs settings;
+          inherit inputs;
           my = {
-            constants = import ../constants/shared.nix;
+            constants = shared;
             host = facts;
+            system = {
+              flakeDir = "${facts.homeDirectory}/${shared.identity.flakeSubpath}";
+            };
+            desktop = {
+              compositors = facts.compositors or [ ];
+            };
           };
         };
       };

@@ -1,35 +1,12 @@
-# hosts/legion.nix — legion composition: facts + feature flags.
-_:
-let
-  flags = {
-    nvidia = true;
-    displayManager = true;
-    niri = true;
-    umbriel = true;
-    noctalia = true;
-    flatpak = true;
-    kvm = true;
-    yubikey = true;
-  };
-in
+# hosts/legion.nix — legion facts + machine-level modules.
+# Composition (assemblies, compositors) lives in constants/hosts/legion.nix.
+{ lib, modulesPath, ... }:
 {
-  flake.nixosModules.legion =
-    {
-      lib,
-      modulesPath,
-      ...
-    }:
-    {
-      imports = [
-        (modulesPath + "/installer/scan/not-detected.nix")
-      ];
+  imports = [
+    (modulesPath + "/installer/scan/not-detected.nix")
+  ];
 
-      my.host = import ../constants/hosts/legion.nix;
+  my.host = import ../constants/hosts/legion.nix;
 
-      nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
-
-      settings = flags;
-    };
-
-  flake.hostSettings.legion = flags;
+  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
 }
