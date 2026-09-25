@@ -32,7 +32,7 @@ Never import upward.
 
 ```sh
 cd nixos
-nix fmt                         # treefmt: nixfmt-rfc-style + deadnix
+nix fmt                         # treefmt: nixfmt + deadnix
 nix run nixpkgs#statix -- check .   # lint (from repo root: -- check ./nixos)
 nix flake check                 # eval + formatting check
 nix build .#nixosConfigurations.<host>.config.system.build.toplevel --no-link

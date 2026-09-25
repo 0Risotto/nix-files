@@ -1,0 +1,49 @@
+# nixos/justfile — task runner for the layered config.
+# Override the host with: just host=other <recipe>
+host := "legion"
+
+# List available recipes
+default:
+    @just --list
+
+# Format all nix files
+fmt:
+    nix fmt
+
+# Lint with statix and check formatting
+lint:
+    nix run nixpkgs#statix -- check .
+    nix fmt -- --fail-on-change
+
+# Evaluate, lint, and run all flake checks
+check:
+    nix flake check
+
+# Build the host toplevel without switching
+build:
+    nix build .#nixosConfigurations.{{host}}.config.system.build.toplevel --no-link
+
+# Show the closure diff between the running system and the pending build
+diff:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    new="$(nix build ".#nixosConfigurations.{{host}}.config.system.build.toplevel" --no-link --print-out-paths | tail -1)"
+    nix store diff-closures /run/current-system "$new"
+
+# Build, show the closure diff, confirm, then activate
+switch:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    new="$(nix build ".#nixosConfigurations.{{host}}.config.system.build.toplevel" --no-link --print-out-paths | tail -1)"
+    nix store diff-closures /run/current-system "$new" || true
+    read -r -p "Activate {{host}}? [y/N] " ans
+    [ "$ans" = y ] || exit 1
+    nh os switch
+
+# Update flake inputs
+update:
+    nix flake update
+
+# Build a VM image for smoke testing
+vm:
+    nix build .#nixosConfigurations.{{host}}.config.system.build.vm -L

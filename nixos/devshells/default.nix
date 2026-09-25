@@ -23,6 +23,12 @@ _: {
             nix-output-monitor
             nix-tree
             delta
+            nixd
+            statix
+            deadnix
+            nixfmt
+            treefmt
+            nh
           ];
           shellHook = ''
             exec fish
