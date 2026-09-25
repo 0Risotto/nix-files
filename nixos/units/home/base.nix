@@ -6,12 +6,12 @@
   programs.home-manager.enable = true;
 
   imports = [
-    ./home/packages.nix
-    ./home/compositor.nix
-    ./home/umbriel.nix
-    ./home/gtk.nix
-    ./home/vscode.nix
-    ./home/emacs.nix
+    ./packages.nix
+    ./compositor.nix
+    ./umbriel.nix
+    ./gtk.nix
+    ./vscode.nix
+    ./emacs.nix
   ];
 
   home.sessionPath = [

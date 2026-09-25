@@ -1,6 +1,6 @@
-# modules/default.nix — core system: kernel, users, locale, networking, nix settings
+# units/system/base.nix — core system: kernel, users, locale, networking, nix settings
 _: {
-  flake.nixosModules.default =
+  flake.nixosModules.base =
     {
       config,
       pkgs,

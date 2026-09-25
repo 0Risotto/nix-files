@@ -43,8 +43,13 @@
       systems = [ "x86_64-linux" ];
 
       imports =
-        importTree ./modules
+        importTree ./options
+        ++ importTree ./units/system
+        ++ importTree ./units/desktop
+        ++ importTree ./units/hardware
+        ++ importTree ./units/services
         ++ importTree ./devshells
+        ++ importTree ./flake-modules
         ++ importTree ./hosts
         ++ [
           inputs.treefmt-nix.flakeModule

@@ -144,13 +144,13 @@ in
       appearance = {
         prefer_no_csd = true;
         corner_radius = 18;
-      #  blur = {
-      #    enabled = true;
-      #    optimized = true;
-      #    passes = 3;
-      #   radius = 3;
-      #   noise = 0.05;
-      #  };
+        #  blur = {
+        #    enabled = true;
+        #    optimized = true;
+        #    passes = 3;
+        #   radius = 3;
+        #   noise = 0.05;
+        #  };
         shadow = {
           enabled = true;
           softness = 10;

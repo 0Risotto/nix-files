@@ -1,7 +1,7 @@
-# modules/hosts.nix — auto-discovers hosts/*.nix and generates nixosConfigurations
+# flake-modules/hosts.nix — auto-discovers hosts/*.nix and generates nixosConfigurations
 { self, inputs, ... }:
 let
-  hostsDir = ../../hosts;
+  hostsDir = ../hosts;
   hostNames =
     let
       entries = builtins.readDir hostsDir;
@@ -13,10 +13,10 @@ let
   mkHost =
     name:
     let
-      # All feature modules except settings/default/home/hosts and host names
+      # All feature modules except settings/base/home/hosts and host names
       allNames = builtins.attrNames self.nixosModules;
       featureNames = builtins.filter (
-        n: n != "settings" && n != "default" && n != "home" && n != "hosts" && !builtins.elem n hostNames
+        n: n != "settings" && n != "base" && n != "home" && n != "hosts" && !builtins.elem n hostNames
       ) allNames;
     in
     {
@@ -25,7 +25,7 @@ let
         specialArgs = { inherit inputs self; };
         modules = [
           self.nixosModules.settings
-          self.nixosModules.default
+          self.nixosModules.base
           self.nixosModules.${name}
           self.nixosModules.home
         ]
@@ -53,9 +53,9 @@ let
               stateVersion = "26.05";
             };
           }
-          ../../home.nix
+          ../units/home/base.nix
         ];
-        extraSpecialArgs = { inherit inputs; };
+        extraSpecialArgs = { inherit inputs settings; };
       };
     };
 in

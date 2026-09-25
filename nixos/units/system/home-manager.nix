@@ -17,7 +17,9 @@
 
         users = {
           ${primaryUser} = {
-            imports = lib.optional (primaryCfg.homeModule != null) primaryCfg.homeModule ++ [ ../../home.nix ];
+            imports = lib.optional (primaryCfg.homeModule != null) primaryCfg.homeModule ++ [
+              ../home/base.nix
+            ];
             home = {
               username = config.settings.username;
               homeDirectory = config.settings.homeDirectory;
@@ -27,7 +29,7 @@
           };
         }
         // lib.mapAttrs (name: cfg: {
-          imports = lib.optional (cfg.homeModule != null) cfg.homeModule ++ [ ../../home.nix ];
+          imports = lib.optional (cfg.homeModule != null) cfg.homeModule ++ [ ../home/base.nix ];
           home = {
             username = name;
             homeDirectory = "/home/${name}";
