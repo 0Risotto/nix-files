@@ -14,6 +14,5 @@
     just
     fzf
     zoxide
-    atuin
   ];
 }
