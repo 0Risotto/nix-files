@@ -9,6 +9,7 @@ in
   baseHome = [
     ../units/home/base.nix
     ../units/home/packages.nix
+    ../units/home/herdr.nix
   ];
 
   inherit load;
