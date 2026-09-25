@@ -10,7 +10,7 @@
 
     nvidia = lib.mkOption {
       type = lib.types.bool;
-      default = (config.my.host.gpu or { }) ? nvidiaBusId;
+      default = config.my.host.gpu.nvidiaBusId != null;
       description = "Enable NVIDIA GPU drivers (offload mode for hybrid laptops)";
     };
 

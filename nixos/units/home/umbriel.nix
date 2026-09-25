@@ -90,7 +90,7 @@ in
           ];
           inherit (monitor) workspaces;
         }
-        // lib.optionalAttrs (monitor ? mode) { inherit (monitor) mode; }
+        // lib.optionalAttrs (monitor.mode != null) { inherit (monitor) mode; }
       ) monitors;
 
       workspaces.back_and_forth = true;

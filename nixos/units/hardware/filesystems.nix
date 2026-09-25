@@ -1,5 +1,5 @@
 # units/hardware/filesystems.nix — disks and swap from host facts
-{ config, ... }:
+{ config, lib, ... }:
 let
   disks = config.my.host.disks;
 in
@@ -29,5 +29,5 @@ in
     };
   };
 
-  swapDevices = [ config.my.host.swap ];
+  swapDevices = lib.optional (config.my.host.swap != null) config.my.host.swap;
 }
