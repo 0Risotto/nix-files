@@ -13,11 +13,5 @@
       default = true;
       description = "Enable nh (Nix CLI helper) with system-level flake vars";
     };
-
-    yubikey = lib.mkOption {
-      type = lib.types.bool;
-      default = false;
-      description = "Enable YubiKey support (pcscd, udev rules, GPG agent, ykman)";
-    };
   };
 }
