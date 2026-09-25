@@ -42,10 +42,27 @@ in
   hardware.graphics.enable = true;
   hardware.bluetooth.enable = system.bluetooth;
 
-  nix.settings.experimental-features = [
-    "nix-command"
-    "flakes"
-  ];
+  nix = {
+    settings = {
+      experimental-features = [
+        "nix-command"
+        "flakes"
+      ];
+      auto-optimise-store = true;
+      trusted-users = [
+        "root"
+        "@wheel"
+      ];
+    };
+
+    gc = {
+      automatic = true;
+      dates = "weekly";
+      options = "--delete-older-than 14d";
+    };
+
+    optimise.automatic = true;
+  };
 
   system.stateVersion = host.stateVersion;
 
