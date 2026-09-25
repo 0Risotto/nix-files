@@ -1,4 +1,4 @@
-# units/home/neovim.nix — AstroNvim (lazy.nvim) configuration.
+# units/home/neovim.nix — LazyVim configuration.
 # Config files are symlinked from the store; lazy.nvim installs plugins at
 # runtime under ~/.local/share/nvim and keeps writing lazy-lock.json into
 # ~/.config/nvim, which stays a real writable directory.
@@ -6,18 +6,11 @@
 let
   cfg = ./nvim;
   files = [
-    ".luarc.json"
     "init.lua"
-    "lua/community.lua"
-    "lua/lazy_setup.lua"
-    "lua/polish.lua"
-    "lua/plugins/astrocore.lua"
-    "lua/plugins/astrolsp.lua"
-    "lua/plugins/astroui.lua"
-    "lua/plugins/mason.lua"
-    "lua/plugins/none-ls.lua"
-    "lua/plugins/treesitter.lua"
-    "lua/plugins/user.lua"
+    "lua/config/autocmds.lua"
+    "lua/config/keymaps.lua"
+    "lua/config/lazy.lua"
+    "lua/config/options.lua"
   ];
 in
 {
