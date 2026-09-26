@@ -355,6 +355,7 @@ in
 
         # ── Screenshots ──
         "Mod+Shift+S" = "spawn:noctalia msg screenshot-region";
+        "Mod+Shift+A" = "spawn:image-search";
         "Mod+Shift+Q" =
           "spawn:grim -g \"$(slurp)\" /tmp/qr.png && zbarimg --quiet --raw /tmp/qr.png | xargs xdg-open; rm -f /tmp/qr.png";
 

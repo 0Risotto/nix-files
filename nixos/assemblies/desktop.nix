@@ -10,6 +10,7 @@
       ../units/desktop/fish.nix
       ../units/desktop/kitty.nix
       ../units/desktop/starship.nix
+      ../units/desktop/image-search.nix
       ../units/services/flatpak.nix
     ];
 

@@ -323,6 +323,7 @@ lib.mkIf (builtins.elem "niri" config.my.desktop.compositors) {
 
           # ── Screenshots ──
           "Mod+Shift+S"."spawn-sh" = "noctalia msg screenshot-region";
+          "Mod+Shift+A"."spawn-sh" = "image-search";
           "Mod+Shift+Q"."spawn-sh" = ''
             grim -g "$(slurp)" /tmp/qr.png \
             && zbarimg --quiet --raw /tmp/qr.png \
