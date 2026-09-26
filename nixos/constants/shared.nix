@@ -18,8 +18,6 @@
       "$HOME/.npm-global/bin"
     ];
     variables = {
-      EDITOR = "nvim";
-      VISUAL = "nvim";
       PAGER = "less";
       NIXPKGS_ALLOW_UNFREE = "1";
     };

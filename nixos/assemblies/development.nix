@@ -4,7 +4,7 @@
 
   home = {
     imports = [
-      ../units/home/editors/vscode.nix
+      ../units/home/editors/zed.nix
       ../units/home/editors/emacs.nix
       ../units/home/editors/neovim.nix
       ../units/home/apps/dev-packages.nix

@@ -244,7 +244,7 @@ in
         # ── Apps / noctalia ──
         "Mod+Shift+Escape" = "cheatsheet-toggle";
         "Mod+Shift+E" = "spawn:hyprpicker -a";
-        "Mod+C" = "spawn:codium";
+        "Mod+C" = "spawn:zeditor";
         "Mod+I" = "spawn:noctalia msg settings-toggle";
         "Mod+N" = "spawn:noctalia msg panel-toggle control-center";
         "Mod+J" = "spawn:noctalia msg bar-toggle";

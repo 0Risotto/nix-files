@@ -1,13 +1,16 @@
 # Home-manager base unit: session, xdg dirs, home-manager itself.
 # username / homeDirectory / stateVersion are set by the caller
-# (NixOS: units/system/home-manager.nix; standalone: flake-modules/hosts.nix).
-{ my, ... }:
+# (NixOS: units/nixos/core/home-manager.nix; standalone: flake-modules/hosts.nix).
+{ lib, my, ... }:
 {
   programs.home-manager.enable = true;
 
   home.sessionPath = my.constants.session.path;
 
-  home.sessionVariables = my.constants.session.variables;
+  home.sessionVariables = my.constants.session.variables // {
+    EDITOR = lib.mkDefault "nvim";
+    VISUAL = lib.mkDefault "nvim";
+  };
 
   xdg = {
     enable = true;

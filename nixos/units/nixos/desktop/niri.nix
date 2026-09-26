@@ -243,7 +243,7 @@ lib.mkIf (builtins.elem "niri" config.my.desktop.compositors) {
           # ===== Simple binds (no props on bind node) =====
           "Mod+Shift+ESCAPE"."show-hotkey-overlay" = _: { };
           "Mod+Shift+E"."spawn-sh" = "hyprpicker -a";
-          "Mod+C"."spawn" = [ "codium" ];
+          "Mod+C"."spawn" = [ "zeditor" ];
           "Mod+I"."spawn-sh" = "noctalia msg settings-toggle";
           "Mod+N"."spawn-sh" = "noctalia msg panel-toggle control-center";
           "Mod+J"."spawn-sh" = "noctalia msg bar-toggle";
