@@ -7,6 +7,6 @@
   };
 
   home = {
-    imports = [ ../units/home/gaming.nix ];
+    imports = [ ../units/home/apps/gaming.nix ];
   };
 }

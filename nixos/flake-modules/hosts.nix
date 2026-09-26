@@ -18,17 +18,17 @@ let
   # Always-on modules: options, core system, machine hardware, base services.
   baseModules = [
     ../options
-    ../units/system/base.nix
-    ../units/system/apps.nix
-    ../units/system/home-manager.nix
-    ../units/hardware/kernel.nix
-    ../units/hardware/filesystems.nix
-    ../units/hardware/efi.nix
-    ../units/hardware/audio.nix
-    ../units/hardware/nvidia.nix
-    ../units/hardware/intel.nix
-    ../units/hardware/thermal.nix
-    ../units/services/nh.nix
+    ../units/nixos/core/base.nix
+    ../units/nixos/core/apps.nix
+    ../units/nixos/core/home-manager.nix
+    ../units/nixos/hardware/kernel.nix
+    ../units/nixos/hardware/filesystems.nix
+    ../units/nixos/hardware/efi.nix
+    ../units/nixos/hardware/audio.nix
+    ../units/nixos/hardware/nvidia.nix
+    ../units/nixos/hardware/intel.nix
+    ../units/nixos/hardware/thermal.nix
+    ../units/nixos/services/nh.nix
   ];
 
   mkHost =

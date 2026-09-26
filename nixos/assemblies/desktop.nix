@@ -2,16 +2,16 @@
 {
   nixos = {
     imports = [
-      ../units/desktop/theme.nix
-      ../units/desktop/display-manager.nix
-      ../units/desktop/niri.nix
-      ../units/desktop/umbriel.nix
-      ../units/desktop/noctalia.nix
-      ../units/desktop/fish.nix
-      ../units/desktop/kitty.nix
-      ../units/desktop/starship.nix
-      ../units/desktop/image-search.nix
-      ../units/services/flatpak.nix
+      ../units/nixos/desktop/theme.nix
+      ../units/nixos/desktop/display-manager.nix
+      ../units/nixos/desktop/niri.nix
+      ../units/nixos/desktop/umbriel.nix
+      ../units/nixos/desktop/noctalia.nix
+      ../units/nixos/shell/fish.nix
+      ../units/nixos/shell/kitty.nix
+      ../units/nixos/shell/starship.nix
+      ../units/nixos/desktop/image-search.nix
+      ../units/nixos/services/flatpak.nix
     ];
 
     my.desktop = {
@@ -23,9 +23,9 @@
 
   home = {
     imports = [
-      ../units/home/desktop-apps.nix
-      ../units/home/umbriel.nix
-      ../units/home/gtk.nix
+      ../units/home/desktop/desktop-apps.nix
+      ../units/home/desktop/umbriel.nix
+      ../units/home/desktop/gtk.nix
     ];
   };
 }

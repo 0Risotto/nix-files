@@ -9,7 +9,7 @@ Never import upward.
 |---|---|---|
 | constants | `constants/shared.nix`, `constants/hosts/<host>.nix` | Pure data. No `config`/`lib`/`pkgs`, no conditionals, no host logic. |
 | options | `options/*.nix` | `my.*` option declarations only. One domain per file. No effects. |
-| units | `units/{system,hardware,desktop,services,home}/*.nix` | One capability per file. Plain NixOS or HM module. Reads `config.my.*` / `my.*`; never references a host name or imports a sibling unit. |
+| units | `units/nixos/{core,hardware,desktop,shell,services}/*.nix`, `units/home/{session,shell,desktop,editors,apps}/*.nix` | One capability per file. Plain NixOS or HM module; `nixos/` is system, `home/` is home-manager. Reads `config.my.*` / `my.*`; never references a host name or imports a sibling unit. |
 | assemblies | `assemblies/<name>.nix` | Exports `{ nixos = <module>; home = <module>; }`. Imports units and binds `my.*` flags. Add a file to add a composition. |
 | hosts | `hosts/<host>.nix` | Sets `my.host = import ../constants/hosts/<host>.nix` plus machine-only modules. No feature flags. |
 
@@ -23,7 +23,7 @@ Never import upward.
 
 ## Adding things
 
-- **Unit**: create `units/<area>/<name>.nix` as a plain module with a `my.*` gate if optional.
+- **Unit**: create `units/nixos/<area>/<name>.nix` (system) or `units/home/<area>/<name>.nix` (home-manager) as a plain module with a `my.*` gate if optional.
 - **Assembly**: create `assemblies/<name>.nix` with `nixos`/`home` attrs, import its units,
   set its flags. Then add the name to `assemblies` in the host's `constants/hosts/<host>.nix`.
 - **Host**: run `./bootstrap.sh`; it writes `constants/hosts/<host>.nix` + `hosts/<host>.nix`.

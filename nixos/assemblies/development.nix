@@ -4,10 +4,10 @@
 
   home = {
     imports = [
-      ../units/home/vscode.nix
-      ../units/home/emacs.nix
-      ../units/home/neovim.nix
-      ../units/home/dev-packages.nix
+      ../units/home/editors/vscode.nix
+      ../units/home/editors/emacs.nix
+      ../units/home/editors/neovim.nix
+      ../units/home/apps/dev-packages.nix
     ];
   };
 }

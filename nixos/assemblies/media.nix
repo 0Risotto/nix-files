@@ -3,6 +3,6 @@
   nixos = { };
 
   home = {
-    imports = [ ../units/home/media.nix ];
+    imports = [ ../units/home/apps/media.nix ];
   };
 }

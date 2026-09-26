@@ -2,8 +2,8 @@
 {
   nixos = {
     imports = [
-      ../units/services/kvm.nix
-      ../units/services/waydroid.nix
+      ../units/nixos/services/kvm.nix
+      ../units/nixos/services/waydroid.nix
     ];
     my.hardware.kvm = true;
     my.services.waydroid = true;

@@ -7,9 +7,9 @@ in
 {
   # Home modules every user gets, regardless of selected assemblies.
   baseHome = [
-    ../units/home/base.nix
-    ../units/home/packages.nix
-    ../units/home/herdr.nix
+    ../units/home/session/base.nix
+    ../units/home/shell/packages.nix
+    ../units/home/shell/herdr.nix
   ];
 
   inherit load;
