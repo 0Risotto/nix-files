@@ -80,17 +80,6 @@ cat > "$REPO_DIR/nixos/constants/hosts/${HOSTNAME}.nix" << NIXEOF
     boot = "${boot_device}";
   };
 
-  # Fill in after first boot with \`umbriel outputs\` / \`niri msg outputs\`.
-  # Key each monitor by its stable identity ("make model serial", the
-  # "Config name" line) and set connector to the current DRM name.
-  monitors = { };
-  #   "Some Monitor 1234" = {
-  #     connector = "HDMI-A-1";
-  #     mode = "1920x1080@200";  # optional; preferred mode is used otherwise
-  #     position = { x = 0; y = 0; };
-  #     workspaces = [ "1" ];
-  #   };
-
   # NVIDIA bus IDs (only needed for hybrid GPUs).
   gpu = { };
   #   nvidiaBusId = "PCI:1:0:0";

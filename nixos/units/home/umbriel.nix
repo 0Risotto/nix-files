@@ -6,43 +6,6 @@
   ...
 }:
 let
-  inherit (my) constants;
-  monitors = my.host.monitors;
-
-  keybindCommand =
-    bind: if bind.sh != null then "spawn:${bind.sh}" else "spawn:${lib.concatStringsSep " " bind.argv}";
-
-  spawnBinds = builtins.listToAttrs (
-    map (bind: {
-      name = bind.key;
-      value = keybindCommand bind;
-    }) constants.keybinds.spawn
-  );
-
-  mediaBinds = builtins.listToAttrs (
-    map (bind: {
-      name = bind.key;
-      value = {
-        action = "spawn:${bind.command}";
-        allow_when_locked = true;
-      };
-    }) constants.keybinds.media
-  );
-
-  workspaceKey = ws: if ws == "10" then "0" else ws;
-  workspaceBinds = builtins.listToAttrs (
-    builtins.concatMap (ws: [
-      {
-        name = "Mod+${workspaceKey ws}";
-        value = "workspace-switch:\"${ws}\"";
-      }
-      {
-        name = "Mod+Shift+${workspaceKey ws}";
-        value = "column-move-to-workspace:\"${ws}\"";
-      }
-    ]) (lib.concatLists (lib.mapAttrsToList (_: monitor: monitor.workspaces) monitors))
-  );
-
   forceKill = pkgs.writeShellApplication {
     name = "umbriel-force-kill";
     runtimeInputs = [ pkgs.jq ];
@@ -115,32 +78,47 @@ in
       };
 
       # ── outputs.kdl ──
-      output = lib.mapAttrs (
-        _: monitor:
-        {
-          position = [
-            monitor.position.x
-            monitor.position.y
-          ];
-          inherit (monitor) workspaces;
-        }
-        // lib.optionalAttrs (monitor.mode != null) { inherit (monitor) mode; }
-      ) monitors;
+      output."HDMI-A-2" = {
+        mode = "1920x1080@200";
+        position = [
+          0
+          0
+        ];
+        workspaces = [
+          "1"
+          "2"
+          "3"
+          "4"
+          "5"
+          "6"
+          "7"
+          "8"
+          "9"
+        ];
+      };
+      output."eDP-1" = {
+        position = [
+          1920
+          0
+        ];
+        workspaces = [ "10" ];
+      };
 
       workspaces.back_and_forth = true;
 
       # ── input.kdl ──
       input = {
         keyboard = {
-          inherit (constants.keyboard.compositor) layout options;
+          layout = "us,ara";
+          options = "grp:alts_toggle";
         };
         touchpad = {
           tap = true;
           natural_scroll = true;
         };
         cursor = {
-          theme = constants.theme.cursor.name;
-          size = constants.theme.cursor.size;
+          theme = "Bibata-Modern-Classic";
+          size = 24;
           follows_focus = true;
         };
         focus.follows_mouse = true;
@@ -149,7 +127,7 @@ in
       # ── layout.kdl ──
       layout = {
         mode = "scrolling";
-        gap = constants.theme.compositor.gap;
+        gap = 5;
         extent_presets = [
           0.33333
           0.5
@@ -165,7 +143,7 @@ in
       # ── misc.kdl ──
       appearance = {
         prefer_no_csd = true;
-        corner_radius = constants.theme.compositor.umbriel.cornerRadius;
+        corner_radius = 18;
         #  blur = {
         #    enabled = true;
         #    optimized = true;
@@ -183,7 +161,7 @@ in
       window_rule = [
         # transparent, blurred windows; later rules can override parts of it
         {
-          opacity = constants.theme.compositor.windowOpacity;
+          opacity = 0.91;
           blur = true;
           blur_popups = true;
           blur_optimized = true;
@@ -262,97 +240,171 @@ in
       };
 
       # ── keybinds.kdl ──
-      keybinds =
-        spawnBinds
-        // mediaBinds
-        // workspaceBinds
-        // {
-          # ── Apps / noctalia ──
-          "Mod+Shift+Escape" = "cheatsheet-toggle";
-          "Mod+Q" = "window-close";
-          "Mod+Shift+K" = "spawn:${forceKill}/bin/umbriel-force-kill";
-          #"Mod+A" = "spawn:noctalia msg panel-toggle launcher";
-          "Mod+A" = "spawn:vicinae open";
+      keybinds = {
+        # ── Apps / noctalia ──
+        "Mod+Shift+Escape" = "cheatsheet-toggle";
+        "Mod+Shift+E" = "spawn:hyprpicker -a";
+        "Mod+C" = "spawn:codium";
+        "Mod+I" = "spawn:noctalia msg settings-toggle";
+        "Mod+N" = "spawn:noctalia msg panel-toggle control-center";
+        "Mod+J" = "spawn:noctalia msg bar-toggle";
+        "Mod+Shift+M" = "spawn:noctalia msg mic-mute";
+        "Mod+Shift+R" = "spawn:noctalia msg config-reload";
+        "Mod+Ctrl+T" = "spawn:noctalia msg panel-toggle wallpaper";
+        "Mod+Q" = "window-close";
+        "Mod+Shift+K" = "spawn:${forceKill}/bin/umbriel-force-kill";
+        "Mod+X" = "spawn:emacs";
+        "Mod+T" = "spawn:kitty";
+        #"Mod+A" = "spawn:noctalia msg panel-toggle launcher";
+        "Mod+A" = "spawn:vicinae open";
+        "Mod+F" = "spawn:firefox";
+        "Mod+E" = "spawn:nautilus";
+        "Mod+G" = "spawn:gamescope -W 1920 -H 1080 -- steam";
+        "Mod+L" = "spawn:noctalia msg session lock";
+        "Mod+Shift+L" = "spawn:noctalia msg panel-toggle session";
 
-          # ── Window/column focus ──
-          "Mod+Left" = "window-focus-left";
-          "Mod+Right" = "window-focus-right";
-          "Mod+Up" = "window-focus-up";
-          "Mod+Down" = "window-focus-down";
-          "Mod+Home" = "column-focus-first";
-          "Mod+End" = "column-focus-last";
+        # ── Window/column focus ──
+        "Mod+Left" = "window-focus-left";
+        "Mod+Right" = "window-focus-right";
+        "Mod+Up" = "window-focus-up";
+        "Mod+Down" = "window-focus-down";
+        "Mod+Home" = "column-focus-first";
+        "Mod+End" = "column-focus-last";
 
-          # ── Window/column movement ──
-          "Mod+Shift+Left" = "column-move-left";
-          "Mod+Shift+Right" = "column-move-right";
-          "Mod+Shift+Up" = "window-move-up";
-          "Mod+Shift+Down" = "window-move-down";
-          "Mod+Ctrl+Home" = "column-move-to-first";
-          "Mod+Ctrl+End" = "column-move-to-last";
+        # ── Window/column movement ──
+        "Mod+Shift+Left" = "column-move-left";
+        "Mod+Shift+Right" = "column-move-right";
+        "Mod+Shift+Up" = "window-move-up";
+        "Mod+Shift+Down" = "window-move-down";
+        "Mod+Ctrl+Home" = "column-move-to-first";
+        "Mod+Ctrl+End" = "column-move-to-last";
 
-          # ── Output focus/movement ──
-          "Mod+Ctrl+Left" = "output-focus-left";
-          "Mod+Ctrl+Right" = "output-focus-right";
-          "Mod+Shift+Ctrl+Left" = "column-move-to-output-left";
-          "Mod+Shift+Ctrl+Right" = "column-move-to-output-right";
-          "Mod+Shift+Ctrl+Up" = "column-move-to-output-up";
-          "Mod+Shift+Ctrl+Down" = "column-move-to-output-down";
+        # ── Output focus/movement ──
+        "Mod+Ctrl+Left" = "output-focus-left";
+        "Mod+Ctrl+Right" = "output-focus-right";
+        "Mod+Shift+Ctrl+Left" = "column-move-to-output-left";
+        "Mod+Shift+Ctrl+Right" = "column-move-to-output-right";
+        "Mod+Shift+Ctrl+Up" = "column-move-to-output-up";
+        "Mod+Shift+Ctrl+Down" = "column-move-to-output-down";
 
-          # ── Mouse/wheel ──
-          "Mod+WheelUp" = {
-            action = "workspace-previous";
-            cooldown_ms = 150;
-          };
-          "Mod+WheelDown" = {
-            action = "workspace-next";
-            cooldown_ms = 150;
-          };
-          "Mod+Ctrl+WheelUp" = {
-            action = "column-move-to-workspace-previous";
-            cooldown_ms = 150;
-          };
-          "Mod+Ctrl+WheelDown" = {
-            action = "column-move-to-workspace-next";
-            cooldown_ms = 150;
-          };
-          "Mod+WheelLeft" = "window-focus-left";
-          "Mod+WheelRight" = "window-focus-right";
-          "Mod+Shift+WheelUp" = "window-focus-left";
-          "Mod+Shift+WheelDown" = "window-focus-right";
-          "Mod+Ctrl+WheelLeft" = "column-move-left";
-          "Mod+Ctrl+WheelRight" = "column-move-right";
-          "Mod+Ctrl+Shift+WheelUp" = "column-move-left";
-          "Mod+Ctrl+Shift+WheelDown" = "column-move-right";
-
-          # ── Workspaces (quoted names force name lookup) ──
-          "Mod+Ctrl+Up" = "workspace-previous";
-          "Mod+Ctrl+Down" = "workspace-next";
-          "Mod+Tab" = "workspace-focus-last";
-
-          # ── Layout ──
-          "Mod+D" = "window-toggle-maximize";
-          "Mod+Ctrl+C" = "column-center";
-          "Mod+Minus" = "window-modify-primary-extent:-0.1";
-          "Mod+Equal" = "window-modify-primary-extent:0.1";
-          "Mod+Shift+Minus" = "window-modify-secondary-extent:-0.1";
-          "Mod+Shift+Equal" = "window-modify-secondary-extent:0.1";
-          "Mod+W" = "window-toggle-fullscreen";
-
-          # ── Overview ──
-          "Mod+O" = {
-            action = "overview-toggle";
-            repeat = false;
-          };
-
-          # ── Screenshots ──
-          "Mod+Shift+Q" =
-            "spawn:grim -g \"$(slurp)\" /tmp/qr.png && zbarimg --quiet --raw /tmp/qr.png | xargs xdg-open; rm -f /tmp/qr.png";
-
-          # ── Session / monitors ──
-          "Ctrl+Alt+Delete" = "session-quit";
-          "Mod+Escape" = "submap:reset";
-          "Mod+Shift+P" = "spawn:${dpmsToggle}/bin/umbriel-dpms-toggle";
+        # ── Mouse/wheel ──
+        "Mod+WheelUp" = {
+          action = "workspace-previous";
+          cooldown_ms = 150;
         };
+        "Mod+WheelDown" = {
+          action = "workspace-next";
+          cooldown_ms = 150;
+        };
+        "Mod+Ctrl+WheelUp" = {
+          action = "column-move-to-workspace-previous";
+          cooldown_ms = 150;
+        };
+        "Mod+Ctrl+WheelDown" = {
+          action = "column-move-to-workspace-next";
+          cooldown_ms = 150;
+        };
+        "Mod+WheelLeft" = "window-focus-left";
+        "Mod+WheelRight" = "window-focus-right";
+        "Mod+Shift+WheelUp" = "window-focus-left";
+        "Mod+Shift+WheelDown" = "window-focus-right";
+        "Mod+Ctrl+WheelLeft" = "column-move-left";
+        "Mod+Ctrl+WheelRight" = "column-move-right";
+        "Mod+Ctrl+Shift+WheelUp" = "column-move-left";
+        "Mod+Ctrl+Shift+WheelDown" = "column-move-right";
+
+        # ── Workspaces (quoted names force name lookup) ──
+        "Mod+Ctrl+Up" = "workspace-previous";
+        "Mod+Ctrl+Down" = "workspace-next";
+        "Mod+Tab" = "workspace-focus-last";
+        "Mod+1" = "workspace-switch:\"1\"";
+        "Mod+2" = "workspace-switch:\"2\"";
+        "Mod+3" = "workspace-switch:\"3\"";
+        "Mod+4" = "workspace-switch:\"4\"";
+        "Mod+5" = "workspace-switch:\"5\"";
+        "Mod+6" = "workspace-switch:\"6\"";
+        "Mod+7" = "workspace-switch:\"7\"";
+        "Mod+8" = "workspace-switch:\"8\"";
+        "Mod+9" = "workspace-switch:\"9\"";
+        "Mod+0" = "workspace-switch:\"10\"";
+        "Mod+Shift+1" = "column-move-to-workspace:\"1\"";
+        "Mod+Shift+2" = "column-move-to-workspace:\"2\"";
+        "Mod+Shift+3" = "column-move-to-workspace:\"3\"";
+        "Mod+Shift+4" = "column-move-to-workspace:\"4\"";
+        "Mod+Shift+5" = "column-move-to-workspace:\"5\"";
+        "Mod+Shift+6" = "column-move-to-workspace:\"6\"";
+        "Mod+Shift+7" = "column-move-to-workspace:\"7\"";
+        "Mod+Shift+8" = "column-move-to-workspace:\"8\"";
+        "Mod+Shift+9" = "column-move-to-workspace:\"9\"";
+        "Mod+Shift+0" = "column-move-to-workspace:\"10\"";
+
+        # ── Layout ──
+        "Mod+D" = "window-toggle-maximize";
+        "Mod+Ctrl+C" = "column-center";
+        "Mod+Minus" = "window-modify-primary-extent:-0.1";
+        "Mod+Equal" = "window-modify-primary-extent:0.1";
+        "Mod+Shift+Minus" = "window-modify-secondary-extent:-0.1";
+        "Mod+Shift+Equal" = "window-modify-secondary-extent:0.1";
+        "Mod+W" = "window-toggle-fullscreen";
+
+        # ── Overview ──
+        "Mod+O" = {
+          action = "overview-toggle";
+          repeat = false;
+        };
+
+        # ── Screenshots ──
+        "Mod+Shift+S" = "spawn:noctalia msg screenshot-region";
+        "Mod+Shift+Q" =
+          "spawn:grim -g \"$(slurp)\" /tmp/qr.png && zbarimg --quiet --raw /tmp/qr.png | xargs xdg-open; rm -f /tmp/qr.png";
+
+        # ── Session / monitors ──
+        "Ctrl+Alt+Delete" = "session-quit";
+        "Mod+Escape" = "submap:reset";
+        "Mod+Shift+P" = "spawn:${dpmsToggle}/bin/umbriel-dpms-toggle";
+
+        # ── Media and brightness (allow when locked) ──
+        "XF86AudioRaiseVolume" = {
+          action = "spawn:noctalia msg volume-up";
+          allow_when_locked = true;
+        };
+        "XF86AudioLowerVolume" = {
+          action = "spawn:noctalia msg volume-down";
+          allow_when_locked = true;
+        };
+        "XF86AudioMute" = {
+          action = "spawn:noctalia msg volume-mute";
+          allow_when_locked = true;
+        };
+        "XF86AudioMicMute" = {
+          action = "spawn:noctalia msg mic-mute";
+          allow_when_locked = true;
+        };
+        "XF86AudioNext" = {
+          action = "spawn:noctalia msg media next";
+          allow_when_locked = true;
+        };
+        "XF86AudioPrev" = {
+          action = "spawn:noctalia msg media previous";
+          allow_when_locked = true;
+        };
+        "XF86AudioPlay" = {
+          action = "spawn:noctalia msg media toggle";
+          allow_when_locked = true;
+        };
+        "XF86AudioPause" = {
+          action = "spawn:noctalia msg media toggle";
+          allow_when_locked = true;
+        };
+        "XF86MonBrightnessUp" = {
+          action = "spawn:noctalia msg brightness-up";
+          allow_when_locked = true;
+        };
+        "XF86MonBrightnessDown" = {
+          action = "spawn:noctalia msg brightness-down";
+          allow_when_locked = true;
+        };
+      };
     };
   };
 }

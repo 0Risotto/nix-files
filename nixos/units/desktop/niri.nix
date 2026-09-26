@@ -7,50 +7,6 @@
 }:
 let
   wrap = inputs.nix-wrapper-modules.wrappers.niri.wrap;
-  constants = config.my.constants;
-  monitors = config.my.host.monitors;
-
-  spawnContent =
-    bind: if bind.sh != null then { "spawn-sh" = bind.sh; } else { "spawn" = bind.argv; };
-
-  spawnBinds = builtins.listToAttrs (
-    map (bind: {
-      name = bind.key;
-      value =
-        if bind.title != null then
-          _: {
-            props."hotkey-overlay-title" = bind.title;
-            content = spawnContent bind;
-          }
-        else
-          spawnContent bind;
-    }) constants.keybinds.spawn
-  );
-
-  mediaBinds = builtins.listToAttrs (
-    map (bind: {
-      name = bind.key;
-      value = _: {
-        props."allow-when-locked" = true;
-        content."spawn-sh" = bind.command;
-      };
-    }) constants.keybinds.media
-  );
-
-  workspaceKey = ws: if ws == "10" then "0" else ws;
-  workspaceValue = ws: if builtins.stringLength ws == 1 then lib.toInt ws else ws;
-  workspaceBinds = builtins.listToAttrs (
-    builtins.concatMap (ws: [
-      {
-        name = "Mod+${workspaceKey ws}";
-        value."focus-workspace" = workspaceValue ws;
-      }
-      {
-        name = "Mod+Shift+${workspaceKey ws}";
-        value."move-column-to-workspace" = workspaceValue ws;
-      }
-    ]) (lib.concatLists (lib.mapAttrsToList (_: monitor: monitor.workspaces) monitors))
-  );
 in
 lib.mkIf (builtins.elem "niri" config.my.desktop.compositors) {
   programs.niri = {
@@ -143,27 +99,34 @@ lib.mkIf (builtins.elem "niri" config.my.desktop.compositors) {
 
         # ── cursor.kdl ──
         cursor = {
-          "xcursor-theme" = constants.theme.cursor.name;
-          "xcursor-size" = constants.theme.cursor.size;
+          "xcursor-theme" = "Bibata-Modern-Classic";
+          "xcursor-size" = 24;
         };
 
         # ── display.kdl ──
-        outputs = lib.mapAttrs (
-          _: monitor:
-          {
-            position = _: {
-              props = {
-                inherit (monitor.position) x y;
-              };
+        outputs."HDMI-A-2" = {
+          position = _: {
+            props = {
+              x = 0;
+              y = 0;
             };
-          }
-          // lib.optionalAttrs (monitor.mode != null) { inherit (monitor) mode; }
-        ) monitors;
+          };
+          mode = "1920x1080@200";
+        };
+        outputs."eDP-1" = {
+          position = _: {
+            props = {
+              x = 1920;
+              y = 0;
+            };
+          };
+        };
 
         # ── input.kdl ──
         input = {
           "keyboard"."xkb" = {
-            inherit (constants.keyboard.compositor) layout options;
+            layout = "us,ara";
+            options = "grp:alts_toggle";
           };
           touchpad = {
             tap = _: { };
@@ -180,7 +143,7 @@ lib.mkIf (builtins.elem "niri" config.my.desktop.compositors) {
 
         # ── layout.kdl ──
         layout = {
-          gaps = constants.theme.compositor.gap;
+          gaps = 5;
           "center-focused-column" = "never";
           "background-color" = "transparent";
           "preset-column-widths" = [
@@ -222,7 +185,7 @@ lib.mkIf (builtins.elem "niri" config.my.desktop.compositors) {
             };
           }
           {
-            "geometry-corner-radius" = constants.theme.compositor.niri.cornerRadius;
+            "geometry-corner-radius" = 15;
             "clip-to-geometry" = true;
           }
           {
@@ -242,129 +205,248 @@ lib.mkIf (builtins.elem "niri" config.my.desktop.compositors) {
         ];
 
         # ── workspaces.kdl ──
-        workspaces = builtins.listToAttrs (
-          lib.concatLists (
-            lib.mapAttrsToList (
-              _: monitor:
-              map (workspace: {
-                name = workspace;
-                value = {
-                  "open-on-output" = monitor.connector;
-                };
-              }) monitor.workspaces
-            ) monitors
-          )
-        );
+        workspaces = {
+          "1" = {
+            "open-on-output" = "HDMI-A-2";
+          };
+          "2" = {
+            "open-on-output" = "HDMI-A-2";
+          };
+          "3" = {
+            "open-on-output" = "HDMI-A-2";
+          };
+          "4" = {
+            "open-on-output" = "HDMI-A-2";
+          };
+          "5" = {
+            "open-on-output" = "HDMI-A-2";
+          };
+          "6" = {
+            "open-on-output" = "HDMI-A-2";
+          };
+          "7" = {
+            "open-on-output" = "HDMI-A-2";
+          };
+          "8" = {
+            "open-on-output" = "HDMI-A-2";
+          };
+          "9" = {
+            "open-on-output" = "HDMI-A-2";
+          };
+          "10" = {
+            "open-on-output" = "eDP-1";
+          };
+        };
 
         # ── keybinds.kdl ──
-        binds =
-          spawnBinds
-          // mediaBinds
-          // workspaceBinds
-          // {
-            # ===== Simple binds (no props on bind node) =====
-            "Mod+Shift+ESCAPE"."show-hotkey-overlay" = _: { };
+        binds = {
+          # ===== Simple binds (no props on bind node) =====
+          "Mod+Shift+ESCAPE"."show-hotkey-overlay" = _: { };
+          "Mod+Shift+E"."spawn-sh" = "hyprpicker -a";
+          "Mod+C"."spawn" = [ "codium" ];
+          "Mod+I"."spawn-sh" = "noctalia msg settings-toggle";
+          "Mod+N"."spawn-sh" = "noctalia msg panel-toggle control-center";
+          "Mod+J"."spawn-sh" = "noctalia msg bar-toggle";
+          "Mod+Shift+M"."spawn-sh" = "noctalia msg mic-mute";
+          "Mod+Shift+R"."spawn-sh" = "noctalia msg config-reload";
+          "Mod+Ctrl+T"."spawn-sh" = "noctalia msg panel-toggle wallpaper";
 
-            # ── Window movement/focus ──
-            "Mod+Q"."close-window" = _: { };
-            "Mod+Shift+K"."spawn" = [
-              "sh"
-              "-c"
-              "niri msg pick-window | grep PID: | awk '{print \$2}' | xargs kill"
-            ];
-            "Mod+Left"."focus-column-left" = _: { };
-            "Mod+Right"."focus-column-right" = _: { };
-            "Mod+Up"."focus-window-up" = _: { };
-            "Mod+Down"."focus-window-down" = _: { };
-            "Mod+Shift+Left"."move-column-left" = _: { };
-            "Mod+Shift+Right"."move-column-right" = _: { };
-            "Mod+Shift+UP"."move-window-up" = _: { };
-            "Mod+Shift+Down"."move-window-down" = _: { };
-            "Mod+Home"."focus-column-first" = _: { };
-            "Mod+End"."focus-column-last" = _: { };
-            "Mod+CTRL+Home"."move-column-to-first" = _: { };
-            "Mod+CTRL+End"."move-column-to-last" = _: { };
-            "Mod+CTRL+Left"."focus-monitor-left" = _: { };
-            "Mod+CTRL+Right"."focus-monitor-right" = _: { };
-            "Mod+CTRL+Up"."focus-workspace-up" = _: { };
-            "Mod+CTRL+Down"."focus-workspace-down" = _: { };
-            "Mod+Shift+CTRL+Left"."move-column-to-monitor-left" = _: { };
-            "Mod+Shift+CTRL+Right"."move-column-to-monitor-right" = _: { };
-            "Mod+Shift+CTRL+UP"."move-column-to-monitor-up" = _: { };
-            "Mod+Shift+CTRL+Down"."move-column-to-monitor-down" = _: { };
+          # ── Window movement/focus ──
+          "Mod+Q"."close-window" = _: { };
+          "Mod+Shift+K"."spawn" = [
+            "sh"
+            "-c"
+            "niri msg pick-window | grep PID: | awk '{print \$2}' | xargs kill"
+          ];
+          "Mod+Left"."focus-column-left" = _: { };
+          "Mod+Right"."focus-column-right" = _: { };
+          "Mod+Up"."focus-window-up" = _: { };
+          "Mod+Down"."focus-window-down" = _: { };
+          "Mod+Shift+Left"."move-column-left" = _: { };
+          "Mod+Shift+Right"."move-column-right" = _: { };
+          "Mod+Shift+UP"."move-window-up" = _: { };
+          "Mod+Shift+Down"."move-window-down" = _: { };
+          "Mod+Home"."focus-column-first" = _: { };
+          "Mod+End"."focus-column-last" = _: { };
+          "Mod+CTRL+Home"."move-column-to-first" = _: { };
+          "Mod+CTRL+End"."move-column-to-last" = _: { };
+          "Mod+CTRL+Left"."focus-monitor-left" = _: { };
+          "Mod+CTRL+Right"."focus-monitor-right" = _: { };
+          "Mod+CTRL+Up"."focus-workspace-up" = _: { };
+          "Mod+CTRL+Down"."focus-workspace-down" = _: { };
+          "Mod+Shift+CTRL+Left"."move-column-to-monitor-left" = _: { };
+          "Mod+Shift+CTRL+Right"."move-column-to-monitor-right" = _: { };
+          "Mod+Shift+CTRL+UP"."move-column-to-monitor-up" = _: { };
+          "Mod+Shift+CTRL+Down"."move-column-to-monitor-down" = _: { };
 
-            # ── Mouse/wheel ──
-            "Mod+WheelScrollRight"."focus-column-right" = _: { };
-            "Mod+WheelScrollLeft"."focus-column-left" = _: { };
-            "Mod+CTRL+WheelScrollRight"."move-column-right" = _: { };
-            "Mod+CTRL+WheelScrollLeft"."move-column-left" = _: { };
-            "Mod+Shift+WheelScrollDown"."focus-column-right" = _: { };
-            "Mod+Shift+WheelScrollUp"."focus-column-left" = _: { };
-            "Mod+CTRL+Shift+WheelScrollDown"."move-column-right" = _: { };
-            "Mod+CTRL+Shift+WheelScrollUp"."move-column-left" = _: { };
+          # ── Mouse/wheel ──
+          "Mod+WheelScrollRight"."focus-column-right" = _: { };
+          "Mod+WheelScrollLeft"."focus-column-left" = _: { };
+          "Mod+CTRL+WheelScrollRight"."move-column-right" = _: { };
+          "Mod+CTRL+WheelScrollLeft"."move-column-left" = _: { };
+          "Mod+Shift+WheelScrollDown"."focus-column-right" = _: { };
+          "Mod+Shift+WheelScrollUp"."focus-column-left" = _: { };
+          "Mod+CTRL+Shift+WheelScrollDown"."move-column-right" = _: { };
+          "Mod+CTRL+Shift+WheelScrollUp"."move-column-left" = _: { };
 
-            # ── Workspace numbers ──
-            "Mod+TAB"."focus-workspace-previous" = _: { };
+          # ── Workspace numbers ──
+          "Mod+1"."focus-workspace" = 1;
+          "Mod+2"."focus-workspace" = 2;
+          "Mod+3"."focus-workspace" = 3;
+          "Mod+4"."focus-workspace" = 4;
+          "Mod+5"."focus-workspace" = 5;
+          "Mod+6"."focus-workspace" = 6;
+          "Mod+7"."focus-workspace" = 7;
+          "Mod+8"."focus-workspace" = 8;
+          "Mod+9"."focus-workspace" = 9;
+          "Mod+0"."focus-workspace" = "10";
+          "Mod+Shift+1"."move-column-to-workspace" = 1;
+          "Mod+Shift+2"."move-column-to-workspace" = 2;
+          "Mod+Shift+3"."move-column-to-workspace" = 3;
+          "Mod+Shift+4"."move-column-to-workspace" = 4;
+          "Mod+Shift+5"."move-column-to-workspace" = 5;
+          "Mod+Shift+6"."move-column-to-workspace" = 6;
+          "Mod+Shift+7"."move-column-to-workspace" = 7;
+          "Mod+Shift+8"."move-column-to-workspace" = 8;
+          "Mod+Shift+9"."move-column-to-workspace" = 9;
+          "Mod+Shift+0"."move-column-to-workspace" = "10";
+          "Mod+TAB"."focus-workspace-previous" = _: { };
 
-            # ── Layout ──
-            "Mod+D"."maximize-column" = _: { };
-            "Mod+CTRL+C"."center-visible-columns" = _: { };
-            "Mod+Minus"."set-column-width" = "-10%";
-            "Mod+Equal"."set-column-width" = "+10%";
-            "Mod+Shift+Minus"."set-window-height" = "-10%";
-            "Mod+Shift+Equal"."set-column-width" = "+10%";
-            "Mod+W"."fullscreen-window" = _: { };
+          # ── Layout ──
+          "Mod+D"."maximize-column" = _: { };
+          "Mod+CTRL+C"."center-visible-columns" = _: { };
+          "Mod+Minus"."set-column-width" = "-10%";
+          "Mod+Equal"."set-column-width" = "+10%";
+          "Mod+Shift+Minus"."set-window-height" = "-10%";
+          "Mod+Shift+Equal"."set-column-width" = "+10%";
+          "Mod+W"."fullscreen-window" = _: { };
 
-            # ── Screenshots ──
-            "Mod+Shift+Q"."spawn-sh" = ''
-              grim -g "$(slurp)" /tmp/qr.png \
-              && zbarimg --quiet --raw /tmp/qr.png \
-              | xargs xdg-open; rm -f /tmp/qr.png
-            '';
+          # ── Screenshots ──
+          "Mod+Shift+S"."spawn-sh" = "noctalia msg screenshot-region";
+          "Mod+Shift+Q"."spawn-sh" = ''
+            grim -g "$(slurp)" /tmp/qr.png \
+            && zbarimg --quiet --raw /tmp/qr.png \
+            | xargs xdg-open; rm -f /tmp/qr.png
+          '';
 
-            # ===== Binds WITH props on the bind node =====
-            # ── hotkey-overlay-title ──
-            "Mod+A" = _: {
-              props."hotkey-overlay-title" = "Open App Launcher";
-              content."spawn-sh" = "noctalia msg panel-toggle launcher";
-              # content."spawn-sh" = "vicinae open";
-            };
-            "Mod+F" = _: {
-              props."hotkey-overlay-title" = "Open Browser: Firefox";
-              content."spawn" = [ "firefox" ];
-            };
-            # ── cooldown-ms ──
-            "Mod+WheelScrollDown" = _: {
-              props."cooldown-ms" = 150;
-              content."focus-workspace-down" = _: { };
-            };
-            "Mod+WheelScrollUp" = _: {
-              props."cooldown-ms" = 150;
-              content."focus-workspace-up" = _: { };
-            };
-            "Mod+CTRL+WheelScrollDown" = _: {
-              props."cooldown-ms" = 150;
-              content."move-column-to-workspace-down" = _: { };
-            };
-            "Mod+CTRL+WheelScrollUp" = _: {
-              props."cooldown-ms" = 150;
-              content."move-column-to-workspace-up" = _: { };
-            };
-
-            # ── repeat / allow-inhibiting ──
-            "Mod+O" = _: {
-              props.repeat = false;
-              content."toggle-overview" = _: { };
-            };
-            "Mod+ESCAPE" = _: {
-              props."allow-inhibiting" = false;
-              content."toggle-keyboard-shortcuts-inhibit" = _: { };
-            };
-
-            # ── Power ──
-            "CTRL+ALT+Delete"."quit" = _: { };
-            "Mod+Shift+P"."power-off-monitors" = _: { };
+          # ===== Binds WITH props on the bind node =====
+          # ── hotkey-overlay-title ──
+          "Mod+X" = _: {
+            props."hotkey-overlay-title" = "Open emacs";
+            content."spawn" = [ "emacs" ];
           };
+          "Mod+T" = _: {
+            props."hotkey-overlay-title" = "Open Terminal: Kitty";
+            content."spawn" = [ "kitty" ];
+          };
+          "Mod+A" = _: {
+            props."hotkey-overlay-title" = "Open App Launcher";
+            content."spawn-sh" = "noctalia msg panel-toggle launcher";
+            # content."spawn-sh" = "vicinae open";
+          };
+          "Mod+F" = _: {
+            props."hotkey-overlay-title" = "Open Browser: Firefox";
+            content."spawn" = [ "firefox" ];
+          };
+          "Mod+L" = _: {
+            props."hotkey-overlay-title" = "Lock Screen: noctalia lock";
+            content."spawn-sh" = "noctalia msg session lock";
+          };
+          "Mod+Shift+L" = _: {
+            props."hotkey-overlay-title" = "Session Menu: noctalia sessionMenu";
+            content."spawn-sh" = "noctalia msg panel-toggle session";
+          };
+          "Mod+E" = _: {
+            props."hotkey-overlay-title" = "File Manager: Nautilus";
+            content."spawn" = [ "nautilus" ];
+          };
+          "Mod+G" = _: {
+            props."hotkey-overlay-title" = "Open Steam: gamescope";
+            content."spawn" = [
+              "gamescope"
+              "-W"
+              "1920"
+              "-H"
+              "1080"
+              "--"
+              "steam"
+            ];
+          };
+
+          # ── allow-when-locked ──
+          "XF86AudioRaiseVolume" = _: {
+            props."allow-when-locked" = true;
+            content."spawn-sh" = "noctalia msg volume-up";
+          };
+          "XF86AudioLowerVolume" = _: {
+            props."allow-when-locked" = true;
+            content."spawn-sh" = "noctalia msg volume-down";
+          };
+          "XF86AudioMute" = _: {
+            props."allow-when-locked" = true;
+            content."spawn-sh" = "noctalia msg volume-mute";
+          };
+          "XF86AudioMicMute" = _: {
+            props."allow-when-locked" = true;
+            content."spawn-sh" = "noctalia msg mic-mute";
+          };
+          "XF86AudioNext" = _: {
+            props."allow-when-locked" = true;
+            content."spawn-sh" = "noctalia msg media next";
+          };
+          "XF86AudioPrev" = _: {
+            props."allow-when-locked" = true;
+            content."spawn-sh" = "noctalia msg media previous";
+          };
+          "XF86AudioPlay" = _: {
+            props."allow-when-locked" = true;
+            content."spawn-sh" = "noctalia msg media toggle";
+          };
+          "XF86AudioPause" = _: {
+            props."allow-when-locked" = true;
+            content."spawn-sh" = "noctalia msg media toggle";
+          };
+          "XF86MonBrightnessUp" = _: {
+            props."allow-when-locked" = true;
+            content."spawn-sh" = "noctalia msg brightness-up";
+          };
+          "XF86MonBrightnessDown" = _: {
+            props."allow-when-locked" = true;
+            content."spawn-sh" = "noctalia msg brightness-down";
+          };
+
+          # ── cooldown-ms ──
+          "Mod+WheelScrollDown" = _: {
+            props."cooldown-ms" = 150;
+            content."focus-workspace-down" = _: { };
+          };
+          "Mod+WheelScrollUp" = _: {
+            props."cooldown-ms" = 150;
+            content."focus-workspace-up" = _: { };
+          };
+          "Mod+CTRL+WheelScrollDown" = _: {
+            props."cooldown-ms" = 150;
+            content."move-column-to-workspace-down" = _: { };
+          };
+          "Mod+CTRL+WheelScrollUp" = _: {
+            props."cooldown-ms" = 150;
+            content."move-column-to-workspace-up" = _: { };
+          };
+
+          # ── repeat / allow-inhibiting ──
+          "Mod+O" = _: {
+            props.repeat = false;
+            content."toggle-overview" = _: { };
+          };
+          "Mod+ESCAPE" = _: {
+            props."allow-inhibiting" = false;
+            content."toggle-keyboard-shortcuts-inhibit" = _: { };
+          };
+
+          # ── Power ──
+          "CTRL+ALT+Delete"."quit" = _: { };
+          "Mod+Shift+P"."power-off-monitors" = _: { };
+        };
       };
 
       # noctalia.kdl is auto-generated at runtime — include it optionally

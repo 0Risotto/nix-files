@@ -17,47 +17,6 @@ in
             layout = mkOption { type = types.str; };
             variant = mkOption { type = types.str; };
           };
-          compositor = {
-            layout = mkOption { type = types.str; };
-            options = mkOption { type = types.str; };
-          };
-        };
-
-        keybinds = {
-          spawn = mkOption {
-            type = types.listOf (
-              types.submodule {
-                options = {
-                  key = mkOption { type = types.str; };
-                  sh = mkOption {
-                    type = types.nullOr types.str;
-                    default = null;
-                  };
-                  argv = mkOption {
-                    type = types.listOf types.str;
-                    default = [ ];
-                  };
-                  title = mkOption {
-                    type = types.nullOr types.str;
-                    default = null;
-                  };
-                };
-              }
-            );
-            description = "Shared application bindings (key plus shell or argv)";
-          };
-
-          media = mkOption {
-            type = types.listOf (
-              types.submodule {
-                options = {
-                  key = mkOption { type = types.str; };
-                  command = mkOption { type = types.str; };
-                };
-              }
-            );
-            description = "Shared media/brightness bindings, active when locked";
-          };
         };
 
         session = {
@@ -89,13 +48,6 @@ in
             opacity = mkOption { type = types.float; };
             backgroundBlur = mkOption { type = types.int; };
             windowMargin = mkOption { type = types.int; };
-          };
-
-          compositor = {
-            gap = mkOption { type = types.int; };
-            windowOpacity = mkOption { type = types.float; };
-            niri.cornerRadius = mkOption { type = types.int; };
-            umbriel.cornerRadius = mkOption { type = types.int; };
           };
         };
       };
@@ -183,39 +135,6 @@ in
         disks = {
           root = mkOption { type = types.str; };
           boot = mkOption { type = types.str; };
-        };
-
-        monitors = mkOption {
-          type = types.attrsOf (
-            types.submodule {
-              options = {
-                connector = mkOption {
-                  type = types.str;
-                  description = "DRM connector name (e.g. HDMI-A-2), used by niri workspace assignment";
-                };
-                position = {
-                  x = mkOption {
-                    type = types.int;
-                    default = 0;
-                  };
-                  y = mkOption {
-                    type = types.int;
-                    default = 0;
-                  };
-                };
-                mode = mkOption {
-                  type = types.nullOr types.str;
-                  default = null;
-                };
-                workspaces = mkOption {
-                  type = types.listOf types.str;
-                  default = [ ];
-                };
-              };
-            }
-          );
-          default = { };
-          description = "Outputs, keyed by stable monitor identity (\"make model serial\", as shown by `umbriel outputs`/`niri msg outputs`); connector carries the current DRM name";
         };
 
         gpu = {

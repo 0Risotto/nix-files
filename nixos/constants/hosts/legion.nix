@@ -49,38 +49,6 @@
     boot = "/dev/disk/by-uuid/5AA0-1761";
   };
 
-  # Keyed by monitor identity (stable across BIOS/GPU topology changes),
-  # `connector` is the current DRM name for niri workspace assignment.
-  monitors = {
-    "AOC 24G4H 204R4HA004148" = {
-      connector = "HDMI-A-2";
-      mode = "1920x1080@200";
-      position = {
-        x = 0;
-        y = 0;
-      };
-      workspaces = [
-        "1"
-        "2"
-        "3"
-        "4"
-        "5"
-        "6"
-        "7"
-        "8"
-        "9"
-      ];
-    };
-    "AU Optronics 0xB69B Unknown" = {
-      connector = "eDP-1";
-      position = {
-        x = 1920;
-        y = 0;
-      };
-      workspaces = [ "10" ];
-    };
-  };
-
   gpu = {
     nvidiaBusId = "PCI:1:0:0";
     # Intel UHD iGPU (i5-11400H), exposed only when BIOS uses hybrid graphics.
