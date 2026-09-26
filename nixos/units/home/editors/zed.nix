@@ -23,9 +23,11 @@
       "nix"
       "typst"
       "java"
-      "catppuccin"
       "material-icon-theme"
     ];
+
+    # Vendored Catppuccin theme family (no marketplace dependency).
+    themes.catppuccin = ./zed/catppuccin-mauve.json;
 
     userSettings = {
       vim_mode = true;
