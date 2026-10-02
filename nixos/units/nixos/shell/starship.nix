@@ -7,6 +7,12 @@ let
   wrap = inputs.nix-wrapper-modules.wrappers.starship.wrap;
 in
 {
+
+  # Pipes ╰─ ╭─
+  # Powerline symbols                                    
+  # Wedges 🭧🭒 🭣🭧🭓
+  # Random noise 🬖🬥🬔🬗
+  # Cool stuff 󰜥   
   environment.systemPackages = [
     (wrap {
       inherit pkgs;
