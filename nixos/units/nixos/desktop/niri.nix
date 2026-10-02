@@ -185,7 +185,7 @@ lib.mkIf (builtins.elem "niri" config.my.desktop.compositors) {
             };
           }
           {
-            "geometry-corner-radius" = 15;
+            "geometry-corner-radius" = 18;
             "clip-to-geometry" = true;
           }
           {
