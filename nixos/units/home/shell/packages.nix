@@ -1,8 +1,7 @@
 # units/home/packages.nix — core user CLI tools
 { pkgs, ... }:
 let
-  # Opt-in rounded corners for herdr 0.9.1 (ui.border_style = "rounded"):
-  # pane borders, client chrome (menus/modals/toasts), and tab block caps.
+  # Opt-in rounded corners for herdr 0.9.1 (ui.border_style = "rounded").
   # Drop this override once upstream support lands:
   # https://github.com/herdrdev/herdr/discussions/2097
   herdr = pkgs.herdr.overrideAttrs (old: {

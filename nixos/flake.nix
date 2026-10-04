@@ -9,14 +9,19 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    silent-sddm.url = "github:uiriansan/SilentSDDM";
     lanzaboote.url = "github:nix-community/lanzaboote";
 
     nixos-hardware.url = "github:NixOS/nixos-hardware";
 
     zen-browser.url = "github:youwen5/zen-browser-flake";
-    noctalia.url = "github:noctalia-dev/noctalia/cachix";
-    umbriel.url = "github:noctalia-dev/umbriel";
+
+    ryoku = {
+      url = "github:aethctl/Ryoku-on-NixOS";
+      # Keep Ryoku's own tested nixpkgs revision instead of resolving
+      # nixos-unstable fresh, which lags into EOL-Electron territory
+      # (RyoMotion pins electron_41 and recent nixpkgs refuses to evaluate it).
+      inputs.nixpkgs.url = "github:NixOS/nixpkgs/56c02bc00adcf003215cc4bd996d6efaf4cff188";
+    };
 
     nix-wrapper-modules.url = "github:BirdeeHub/nix-wrapper-modules";
 

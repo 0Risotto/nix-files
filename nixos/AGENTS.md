@@ -18,8 +18,12 @@ Never import upward.
   (NixOS) / `homeConfiguration` (standalone). Do not reference `config` from a module's
   `imports` — that causes infinite recursion; register modules in the composition root instead.
 - Home-manager modules receive `my` via `extraSpecialArgs`.
-- Host facts drive defaults: `my.hardware.nvidia` defaults to `my.host.gpu ? nvidiaBusId`,
-  `my.desktop.compositors` defaults to `my.host.compositors`.
+- Host facts drive defaults: `my.hardware.nvidia` defaults to `my.host.gpu ? nvidiaBusId`.
+- The desktop assembly composes **Ryoku on niri** (`units/nixos/desktop/ryoku.nix`, gated by
+  `my.desktop.ryoku`). Host niri overrides live in `units/home/desktop/ryoku.nix`, which
+  home-manager writes to `~/.config/niri/user.kdl` (binds, input) and
+  `~/.config/niri/monitors_user.kdl` (outputs); Ryoku's materializer seeds those files only
+  when absent, and `user.kdl` is included last so its binds win.
 
 ## Adding things
 

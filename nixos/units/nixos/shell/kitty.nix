@@ -1,6 +1,7 @@
 {
   config,
   inputs,
+  lib,
   pkgs,
   ...
 }:
@@ -9,7 +10,10 @@ let
   constants = config.my.constants;
 in
 {
-  environment.systemPackages = [
+  # mkBefore: Ryoku's runtime bundle also ships a plain kitty. The wrapped host
+  # kitty must win the /run/current-system/sw/bin/kitty collision, or its
+  # embedded config (font, shell = herdr, keybindings) is shadowed.
+  environment.systemPackages = lib.mkBefore [
     (wrap {
       inherit pkgs;
 
@@ -43,7 +47,7 @@ in
       };
 
       extraConfig = ''
-        include ${config.my.host.homeDirectory}/.config/kitty/themes/noctalia.conf
+        include ${config.my.host.homeDirectory}/.config/kitty/current-theme.conf
       '';
     })
   ];

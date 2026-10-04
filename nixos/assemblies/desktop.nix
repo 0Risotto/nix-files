@@ -1,12 +1,10 @@
-# assemblies/desktop.nix — Wayland desktop: theme, compositors, terminals, bar.
+# assemblies/desktop.nix — Wayland desktop: theme, Ryoku shell, terminals, apps.
 {
   nixos = {
     imports = [
       ../units/nixos/desktop/theme.nix
       ../units/nixos/desktop/display-manager.nix
-      ../units/nixos/desktop/niri.nix
-      ../units/nixos/desktop/umbriel.nix
-      ../units/nixos/desktop/noctalia.nix
+      ../units/nixos/desktop/ryoku.nix
       ../units/nixos/shell/fish.nix
       ../units/nixos/shell/kitty.nix
       ../units/nixos/shell/starship.nix
@@ -16,7 +14,7 @@
 
     my.desktop = {
       displayManager = true;
-      noctalia = true;
+      ryoku = true;
     };
     my.services.flatpak = true;
   };
@@ -24,7 +22,7 @@
   home = {
     imports = [
       ../units/home/desktop/desktop-apps.nix
-      ../units/home/desktop/umbriel.nix
+      ../units/home/desktop/ryoku.nix
       ../units/home/desktop/gtk.nix
     ];
   };

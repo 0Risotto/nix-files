@@ -80,9 +80,6 @@ let
             system = {
               flakeDir = "${facts.homeDirectory}/${shared.identity.flakeSubpath}";
             };
-            desktop = {
-              compositors = facts.compositors or [ ];
-            };
           };
         };
       };

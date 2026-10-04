@@ -93,17 +93,6 @@ in
           description = "Assemblies composed into this host (assemblies/<name>.nix)";
         };
 
-        compositors = mkOption {
-          type = types.listOf (
-            types.enum [
-              "niri"
-              "umbriel"
-            ]
-          );
-          default = [ ];
-          description = "Wayland compositors to install and configure";
-        };
-
         boot = {
           initrdAvailableKernelModules = mkOption {
             type = types.listOf types.str;

@@ -1,5 +1,5 @@
 # hosts/legion.nix — legion facts + machine-level modules.
-# Composition (assemblies, compositors) lives in constants/hosts/legion.nix.
+# Composition (assemblies) lives in constants/hosts/legion.nix.
 { lib, modulesPath, ... }:
 {
   imports = [

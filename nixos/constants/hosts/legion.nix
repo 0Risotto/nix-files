@@ -20,12 +20,6 @@
     "vpn"
   ];
 
-  # Wayland compositors to install and configure.
-  compositors = [
-    "niri"
-    "umbriel"
-  ];
-
   boot = {
     initrdAvailableKernelModules = [
       "xhci_pci"

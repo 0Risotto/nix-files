@@ -2,6 +2,7 @@
   config,
   pkgs,
   inputs,
+  lib,
   ...
 }:
 let
@@ -24,7 +25,7 @@ let
     abbreviations = {
       q = {
         position = "command";
-        expansion = "noctalia";
+        expansion = "ryoku-shell hub open";
       };
       nhos = {
         position = "command";
@@ -198,6 +199,9 @@ let
   };
 in
 {
-  environment.systemPackages = [ wrappedFish ];
+  # mkBefore: Ryoku's runtime bundle also ships a plain fish. The wrapped host
+  # fish (aliases, abbreviations, starship/zoxide init) must win the
+  # /run/current-system/sw/bin/fish collision.
+  environment.systemPackages = lib.mkBefore [ wrappedFish ];
   users.users.${config.my.host.username}.shell = "${wrappedFish}/bin/fish";
 }

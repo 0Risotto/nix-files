@@ -355,35 +355,6 @@ index 901c5a2..215205b 100644
      pub(super) keybinds: LiveKeybindConfig,
      pub(super) local_keys: crate::config::KeysConfig,
      pub(super) keybinding_source: ClientShellKeybindingSource,
-diff --git a/src/client/shell/tabs.rs b/src/client/shell/tabs.rs
-index 3fdcf7d..149d7d2 100644
---- a/src/client/shell/tabs.rs
-+++ b/src/client/shell/tabs.rs
-@@ -123,6 +123,24 @@ pub(crate) fn render_tab_bar(
-             right_padding = padding.saturating_sub(left) as usize,
-         );
-         put_text(buffer, rect.x, rect.y, rect.width, &text, style);
-+        if config.border_style.rounded() && padding >= 2 {
-+            // Powerline half-circle caps make the one-row tab block read as rounded.
-+            let cap_style = Style::default()
-+                .fg(if tab.focused {
-+                    palette.accent
-+                } else {
-+                    palette.surface0
-+                })
-+                .bg(palette.panel_bg);
-+            for (x, symbol) in [
-+                (rect.x, "\u{e0b6}"),
-+                (rect.x + rect.width - 1, "\u{e0b4}"),
-+            ] {
-+                let cell = &mut buffer[(x, rect.y)];
-+                cell.set_symbol(symbol);
-+                cell.set_style(cap_style);
-+            }
-+        }
-         hits.tabs.push((rect, tab.tab_id.clone()));
-         first_visible.get_or_insert(index);
-         last_visible = Some(index);
 diff --git a/src/client/shell/worktree_overlays.rs b/src/client/shell/worktree_overlays.rs
 index 318c401..22c42b5 100644
 --- a/src/client/shell/worktree_overlays.rs

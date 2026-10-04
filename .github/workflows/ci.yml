@@ -21,11 +21,6 @@ jobs:
             experimental-features = nix-command flakes
             accept-flake-config = true
 
-      - uses: cachix/cachix-action@v16
-        with:
-          name: noctalia
-          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
-          extraPullNames: ""
 
       # Builds every host toplevel and home-manager user (flake-modules/checks.nix)
       # plus statix, treefmt, and host discovery.
@@ -44,11 +39,6 @@ jobs:
             experimental-features = nix-command flakes
             accept-flake-config = true
 
-      - uses: cachix/cachix-action@v16
-        with:
-          name: noctalia
-          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
-          extraPullNames: ""
 
       - name: Check formatting with treefmt
         run: |
@@ -68,11 +58,6 @@ jobs:
             experimental-features = nix-command flakes
             accept-flake-config = true
 
-      - uses: cachix/cachix-action@v16
-        with:
-          name: noctalia
-          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
-          extraPullNames: ""
 
       - name: Run statix check
         run: |
@@ -91,11 +76,6 @@ jobs:
             experimental-features = nix-command flakes
             accept-flake-config = true
 
-      - uses: cachix/cachix-action@v16
-        with:
-          name: noctalia
-          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
-          extraPullNames: ""
 
       - name: Build default devshell
         run: |
@@ -115,11 +95,6 @@ jobs:
             experimental-features = nix-command flakes
             accept-flake-config = true
 
-      - uses: cachix/cachix-action@v16
-        with:
-          name: noctalia
-          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
-          extraPullNames: ""
 
       - name: Evaluate all attributes
         run: |

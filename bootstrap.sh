@@ -62,8 +62,6 @@ cat > "$REPO_DIR/nixos/constants/hosts/${HOSTNAME}.nix" << NIXEOF
     "virtualization"
   ];
 
-  compositors = [ "niri" ];
-
   boot = {
     initrdAvailableKernelModules = [ ${initrd_modules} ];
     kernelModules = [ ${kvm_modules} ];
@@ -96,7 +94,7 @@ echo "[4/6] Writing host module..."
 
 cat > "$REPO_DIR/nixos/hosts/${HOSTNAME}.nix" << NIXEOF
 # hosts/${HOSTNAME}.nix — ${HOSTNAME} facts + machine-level modules.
-# Composition (assemblies, compositors) lives in constants/hosts/${HOSTNAME}.nix.
+# Composition (assemblies) lives in constants/hosts/${HOSTNAME}.nix.
 { lib, modulesPath, ... }:
 {
   imports = [
