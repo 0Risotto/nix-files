@@ -179,9 +179,10 @@ lib.mkIf (builtins.elem "niri" config.my.desktop.compositors) {
         "window-rules" = [
           {
             matches = [ { "app-id" = "^kitty$"; } ];
+            # kitty requests blur itself via background_blur (see kitty.nix);
+            # force-disable the background effect under niri only
             "background-effect" = {
-              blur = true;
-              noise = 0.05;
+              blur = false;
             };
           }
           {

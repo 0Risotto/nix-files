@@ -15,8 +15,5 @@
     (discord.override {
       withVencord = true;
     })
-
-    # VPN
-    cloudflare-warp
   ];
 }

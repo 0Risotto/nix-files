@@ -1,0 +1,553 @@
+diff --git a/src/app/mod.rs b/src/app/mod.rs
+index 757a7f6..34024e5 100644
+--- a/src/app/mod.rs
++++ b/src/app/mod.rs
+@@ -490,6 +490,7 @@ impl App {
+             next_agent_state_change_seq: 0,
+             confirm_close: config.ui.confirm_close,
+             pane_borders: config.ui.pane_borders,
++            border_style: config.ui.border_style,
+             pane_outer_borders: config.ui.pane_outer_borders,
+             pane_scrollbars: config.ui.pane_scrollbars,
+             pane_gaps: config.ui.pane_gaps,
+@@ -838,6 +839,7 @@ impl App {
+                 self.loaded_host_cursor = config.ui.host_cursor;
+                 self.state.confirm_close = config.ui.confirm_close;
+                 self.state.pane_borders = config.ui.pane_borders;
++                self.state.border_style = config.ui.border_style;
+                 self.state.pane_outer_borders = config.ui.pane_outer_borders;
+                 self.state.pane_scrollbars = config.ui.pane_scrollbars;
+                 self.state.pane_gaps = config.ui.pane_gaps;
+diff --git a/src/app/state.rs b/src/app/state.rs
+index 892ec5e..c39476d 100644
+--- a/src/app/state.rs
++++ b/src/app/state.rs
+@@ -832,6 +832,7 @@ pub struct AppState {
+     pub next_agent_state_change_seq: u64,
+     pub confirm_close: bool,
+     pub pane_borders: crate::config::PaneBordersConfig,
++    pub border_style: crate::config::BorderStyleConfig,
+     pub pane_outer_borders: bool,
+     pub pane_scrollbars: bool,
+     pub pane_gaps: bool,
+@@ -1059,6 +1060,7 @@ impl AppState {
+             next_agent_state_change_seq: 0,
+             confirm_close: true,
+             pane_borders: crate::config::PaneBordersConfig::Auto,
++            border_style: crate::config::BorderStyleConfig::Plain,
+             pane_outer_borders: true,
+             pane_scrollbars: true,
+             pane_gaps: false,
+diff --git a/src/client/shell/composition.rs b/src/client/shell/composition.rs
+index e0888d0..04e797f 100644
+--- a/src/client/shell/composition.rs
++++ b/src/client/shell/composition.rs
+@@ -617,7 +617,12 @@ impl ClientShellState {
+             let mut composed = frame.to_ratatui_buffer()?;
+             let cursor = if let ClientShellOverlay::ContextMenu(menu) = overlay {
+                 let rendered =
+-                    render::render_context_menu(&mut composed, menu, &self.config.palette)?;
++                    render::render_context_menu(
++                        &mut composed,
++                        menu,
++                        &self.config.palette,
++                        self.config.border_style,
++                    )?;
+                 occlusion.cover(rendered.area);
+                 self.hits.context_menu_rows = rendered.menu_rows;
+                 None
+@@ -628,6 +633,7 @@ impl ClientShellState {
+                     menu,
+                     snapshot,
+                     &self.config.palette,
++                    self.config.border_style,
+                 )?;
+                 occlusion.cover(rendered.area);
+                 self.hits.global_menu_rows = rendered.menu_rows;
+@@ -641,6 +647,7 @@ impl ClientShellState {
+                     &self.active_endpoint_id,
+                     &self.config.keybinds,
+                     &self.config.palette,
++                    self.config.border_style,
+                 )?;
+                 occlusion.cover(rendered.area);
+                 self.hits.overlay_primary = rendered.primary;
+diff --git a/src/client/shell/config.rs b/src/client/shell/config.rs
+index 2d16b00..456373e 100644
+--- a/src/client/shell/config.rs
++++ b/src/client/shell/config.rs
+@@ -135,6 +135,7 @@ impl ClientShellConfig {
+             theme_name: theme_runtime.manual_name.clone(),
+             theme_runtime,
+             palette: crate::app::client_palette_from_config(config),
++            border_style: config.ui.border_style,
+             keybinds: config
+                 .live_keybinds_with_diagnostics()
+                 .map(|(keybinds, _diagnostics)| keybinds)
+diff --git a/src/client/shell/overlays.rs b/src/client/shell/overlays.rs
+index 07417bd..fbee657 100644
+--- a/src/client/shell/overlays.rs
++++ b/src/client/shell/overlays.rs
+@@ -39,6 +39,7 @@ pub(crate) fn render_client_overlay(
+     active_endpoint_id: &ClientEndpointId,
+     k: &LiveKeybindConfig,
+     p: &Palette,
++    border_style: crate::config::BorderStyleConfig,
+ ) -> Option<OverlayRender> {
+     if !matches!(
+         o,
+@@ -54,28 +55,34 @@ pub(crate) fn render_client_overlay(
+         }
+     }
+     match o {
+-        ClientShellOverlay::Onboarding => render_onboarding_overlay(b, p),
+-        ClientShellOverlay::ProductAnnouncement(v) => render_product_announcement_overlay(b, v, p),
++        ClientShellOverlay::Onboarding => render_onboarding_overlay(b, p, border_style),
++        ClientShellOverlay::ProductAnnouncement(v) => {
++            render_product_announcement_overlay(b, v, p, border_style)
++        }
+         ClientShellOverlay::ReleaseNotes(v) => {
+-            render_release_notes_overlay(b, v, &s.update_install_command, p)
++            render_release_notes_overlay(b, v, &s.update_install_command, p, border_style)
+         }
+-        ClientShellOverlay::Rename(v) => render_rename_overlay(b, v, p),
+-        ClientShellOverlay::ConfirmClose(v) => render_confirm_close_overlay(b, v, p),
+-        ClientShellOverlay::Help(v) => render_help_overlay(b, v, k, p),
++        ClientShellOverlay::Rename(v) => render_rename_overlay(b, v, p, border_style),
++        ClientShellOverlay::ConfirmClose(v) => render_confirm_close_overlay(b, v, p, border_style),
++        ClientShellOverlay::Help(v) => render_help_overlay(b, v, k, p, border_style),
+         ClientShellOverlay::Navigator(v) => {
+-            render_navigator_overlay(b, v, endpoints, active_endpoint_id, p)
+-        }
+-        ClientShellOverlay::Settings(v) => {
+-            settings_overlay::render_settings_overlay(b, v, s.integration_updates_available, p)
++            render_navigator_overlay(b, v, endpoints, active_endpoint_id, p, border_style)
+         }
++        ClientShellOverlay::Settings(v) => settings_overlay::render_settings_overlay(
++            b,
++            v,
++            s.integration_updates_available,
++            p,
++            border_style,
++        ),
+         ClientShellOverlay::WorktreeCreate(v) => {
+-            worktree_overlays::render_worktree_create_overlay(b, v, p)
++            worktree_overlays::render_worktree_create_overlay(b, v, p, border_style)
+         }
+         ClientShellOverlay::WorktreeOpen(v) => {
+-            worktree_overlays::render_worktree_open_overlay(b, v, p)
++            worktree_overlays::render_worktree_open_overlay(b, v, p, border_style)
+         }
+         ClientShellOverlay::WorktreeRemove(v) => {
+-            worktree_overlays::render_worktree_remove_overlay(b, v, p)
++            worktree_overlays::render_worktree_remove_overlay(b, v, p, border_style)
+         }
+         ClientShellOverlay::ContextMenu(_) | ClientShellOverlay::GlobalMenu(_) => None,
+     }
+@@ -87,6 +94,7 @@ pub(crate) fn render_global_menu(
+     menu: &ClientGlobalMenuOverlay,
+     snapshot: &ClientShellSnapshot,
+     palette: &Palette,
++    border_style: crate::config::BorderStyleConfig,
+ ) -> Option<OverlayRender> {
+     let items = super::super::global_menu::global_menu_items(snapshot);
+     let screen = buffer.area;
+@@ -111,7 +119,7 @@ pub(crate) fn render_global_menu(
+         .min(screen.right().saturating_sub(width));
+     let y = launcher.y.saturating_sub(height).max(screen.y);
+     let rect = Rect::new(x, y, width, height);
+-    let inner = panel(buffer, rect, palette.accent, palette.panel_bg)?;
++    let inner = panel(buffer, rect, palette.accent, palette.panel_bg, border_style)?;
+     let mut rows = Vec::new();
+     for (index, (label, action)) in items.iter().enumerate() {
+         let row_y = inner.y.saturating_add(index as u16);
+@@ -164,6 +172,7 @@ pub(crate) fn render_context_menu(
+     buffer: &mut Buffer,
+     menu: &ClientContextMenuOverlay,
+     palette: &Palette,
++    border_style: crate::config::BorderStyleConfig,
+ ) -> Option<OverlayRender> {
+     let items = menu.items();
+     let screen = buffer.area;
+@@ -188,7 +197,7 @@ pub(crate) fn render_context_menu(
+             .saturating_add(screen.height.saturating_sub(height)),
+     );
+     let rect = Rect::new(x, y, width, height);
+-    let inner = panel(buffer, rect, palette.accent, palette.panel_bg)?;
++    let inner = panel(buffer, rect, palette.accent, palette.panel_bg, border_style)?;
+     let mut rows = Vec::new();
+     for (index, item) in items.iter().enumerate() {
+         let row_y = inner.y.saturating_add(index as u16);
+@@ -221,10 +230,16 @@ fn panel(
+     a: Rect,
+     c: ratatui::style::Color,
+     bg: ratatui::style::Color,
++    border_style: crate::config::BorderStyleConfig,
+ ) -> Option<Rect> {
+     if a.width < 2 || a.height < 2 {
+         return None;
+     }
++    let (top_left, top_right, bottom_left, bottom_right) = if border_style.rounded() {
++        ("╭", "╮", "╰", "╯")
++    } else {
++        ("┌", "┐", "└", "┘")
++    };
+     let background = Style::default().bg(bg).remove_modifier(Modifier::DIM);
+     let border = Style::default().fg(c).bg(bg).remove_modifier(Modifier::DIM);
+     for y in a.y..a.bottom() {
+@@ -235,9 +250,9 @@ fn panel(
+     for x in a.x..a.right() {
+         b[(x, a.y)]
+             .set_symbol(if x == a.x {
+-                "┌"
++                top_left
+             } else if x + 1 == a.right() {
+-                "┐"
++                top_right
+             } else {
+                 "─"
+             })
+@@ -245,9 +260,9 @@ fn panel(
+         let y = a.bottom() - 1;
+         b[(x, y)]
+             .set_symbol(if x == a.x {
+-                "└"
++                bottom_left
+             } else if x + 1 == a.right() {
+-                "┘"
++                bottom_right
+             } else {
+                 "─"
+             })
+@@ -304,13 +319,14 @@ fn render_release_notes_overlay(
+     notes: &crate::app::state::ReleaseNotesState,
+     install_command: &str,
+     p: &Palette,
++    border_style: crate::config::BorderStyleConfig,
+ ) -> Option<OverlayRender> {
+     let outer = popup(
+         b.area,
+         crate::ui::RELEASE_NOTES_MODAL_SIZE.0,
+         crate::ui::RELEASE_NOTES_MODAL_SIZE.1,
+     )?;
+-    let inner = panel(b, outer, p.accent, p.panel_bg)?;
++    let inner = panel(b, outer, p.accent, p.panel_bg, border_style)?;
+     if inner.height < 8 || inner.width < 20 {
+         return Some(OverlayRender {
+             area: outer,
+@@ -419,13 +435,14 @@ fn render_product_announcement_overlay(
+     b: &mut Buffer,
+     announcement: &crate::app::state::ProductAnnouncementState,
+     p: &Palette,
++    border_style: crate::config::BorderStyleConfig,
+ ) -> Option<OverlayRender> {
+     let outer = popup(
+         b.area,
+         crate::ui::PRODUCT_ANNOUNCEMENT_MODAL_SIZE.0,
+         crate::ui::PRODUCT_ANNOUNCEMENT_MODAL_SIZE.1,
+     )?;
+-    let inner = panel(b, outer, p.accent, p.panel_bg)?;
++    let inner = panel(b, outer, p.accent, p.panel_bg, border_style)?;
+     if inner.height < 8 || inner.width < 20 {
+         return Some(OverlayRender {
+             area: outer,
+@@ -531,9 +548,13 @@ fn render_product_announcement_overlay(
+     })
+ }
+ 
+-fn render_onboarding_overlay(b: &mut Buffer, p: &Palette) -> Option<OverlayRender> {
++fn render_onboarding_overlay(
++    b: &mut Buffer,
++    p: &Palette,
++    border_style: crate::config::BorderStyleConfig,
++) -> Option<OverlayRender> {
+     let outer = popup(b.area, 64, 16)?;
+-    let inner = panel(b, outer, p.accent, p.panel_bg)?;
++    let inner = panel(b, outer, p.accent, p.panel_bg, border_style)?;
+     if inner.height < 11 {
+         return Some(OverlayRender {
+             area: outer,
+@@ -629,9 +650,10 @@ fn render_rename_overlay(
+     b: &mut Buffer,
+     v: &ClientRenameOverlay,
+     p: &Palette,
++    border_style: crate::config::BorderStyleConfig,
+ ) -> Option<OverlayRender> {
+     let q = popup(b.area, 56, 7)?;
+-    let i = panel(b, q, p.accent, p.panel_bg)?;
++    let i = panel(b, q, p.accent, p.panel_bg, border_style)?;
+     put_text(
+         b,
+         i.x,
+@@ -709,6 +731,7 @@ fn render_navigator_overlay(
+     endpoints: &[ClientShellEndpoint],
+     active_endpoint_id: &ClientEndpointId,
+     p: &Palette,
++    border_style: crate::config::BorderStyleConfig,
+ ) -> Option<OverlayRender> {
+     let a = b.area;
+     let mx = (a.width / 16).max(2);
+@@ -720,7 +743,7 @@ fn render_navigator_overlay(
+         a.height.saturating_sub(my * 2).max(4),
+     )
+     .intersection(a);
+-    let i = panel(b, q, p.accent, p.panel_bg)?;
++    let i = panel(b, q, p.accent, p.panel_bg, border_style)?;
+     let rows = super::aggregate_navigation::navigator_rows(endpoints, active_endpoint_id, n);
+     let search = if n.search_focused {
+         " / ".to_owned()
+@@ -1024,11 +1047,12 @@ fn render_help_overlay(
+     h: &ClientHelpOverlay,
+     k: &LiveKeybindConfig,
+     p: &Palette,
++    border_style: crate::config::BorderStyleConfig,
+ ) -> Option<OverlayRender> {
+     use ratatui::widgets::{Paragraph, Widget, Wrap};
+ 
+     let q = popup(b.area, 76, 22)?;
+-    let i = panel(b, q, p.accent, p.panel_bg)?;
++    let i = panel(b, q, p.accent, p.panel_bg, border_style)?;
+     if i.width < 20 || i.height < 6 {
+         return None;
+     }
+@@ -1162,9 +1186,10 @@ fn render_confirm_close_overlay(
+     b: &mut Buffer,
+     c: &ClientConfirmCloseOverlay,
+     p: &Palette,
++    border_style: crate::config::BorderStyleConfig,
+ ) -> Option<OverlayRender> {
+     let q = popup(b.area, 64, 6)?;
+-    let i = panel(b, q, p.red, p.panel_bg)?;
++    let i = panel(b, q, p.red, p.panel_bg, border_style)?;
+     put_text(
+         b,
+         i.x,
+diff --git a/src/client/shell/settings_overlay.rs b/src/client/shell/settings_overlay.rs
+index 25f37b2..90a79db 100644
+--- a/src/client/shell/settings_overlay.rs
++++ b/src/client/shell/settings_overlay.rs
+@@ -38,6 +38,7 @@ pub(super) fn render_settings_overlay(
+     settings: &ClientSettingsOverlay,
+     integration_updates_available: bool,
+     palette: &Palette,
++    border_style: crate::config::BorderStyleConfig,
+ ) -> Option<OverlayRender> {
+     let integration_height = 14u16
+         .saturating_add(settings.integrations.len().max(1) as u16)
+@@ -48,7 +49,7 @@ pub(super) fn render_settings_overlay(
+         22
+     };
+     let popup = popup(buffer.area, 76, height)?;
+-    let inner = panel(buffer, popup, palette.accent, palette.panel_bg)?;
++    let inner = panel(buffer, popup, palette.accent, palette.panel_bg, border_style)?;
+     if inner.width < 20 || inner.height < 8 {
+         return None;
+     }
+diff --git a/src/client/shell/state.rs b/src/client/shell/state.rs
+index 901c5a2..215205b 100644
+--- a/src/client/shell/state.rs
++++ b/src/client/shell/state.rs
+@@ -35,6 +35,7 @@ pub(crate) struct ClientShellConfig {
+     pub(super) theme_name: String,
+     pub(super) theme_runtime: crate::app::state::ThemeRuntimeConfig,
+     pub(super) palette: Palette,
++    pub(super) border_style: crate::config::BorderStyleConfig,
+     pub(super) keybinds: LiveKeybindConfig,
+     pub(super) local_keys: crate::config::KeysConfig,
+     pub(super) keybinding_source: ClientShellKeybindingSource,
+diff --git a/src/client/shell/tabs.rs b/src/client/shell/tabs.rs
+index 3fdcf7d..149d7d2 100644
+--- a/src/client/shell/tabs.rs
++++ b/src/client/shell/tabs.rs
+@@ -123,6 +123,24 @@ pub(crate) fn render_tab_bar(
+             right_padding = padding.saturating_sub(left) as usize,
+         );
+         put_text(buffer, rect.x, rect.y, rect.width, &text, style);
++        if config.border_style.rounded() && padding >= 2 {
++            // Powerline half-circle caps make the one-row tab block read as rounded.
++            let cap_style = Style::default()
++                .fg(if tab.focused {
++                    palette.accent
++                } else {
++                    palette.surface0
++                })
++                .bg(palette.panel_bg);
++            for (x, symbol) in [
++                (rect.x, "\u{e0b6}"),
++                (rect.x + rect.width - 1, "\u{e0b4}"),
++            ] {
++                let cell = &mut buffer[(x, rect.y)];
++                cell.set_symbol(symbol);
++                cell.set_style(cap_style);
++            }
++        }
+         hits.tabs.push((rect, tab.tab_id.clone()));
+         first_visible.get_or_insert(index);
+         last_visible = Some(index);
+diff --git a/src/client/shell/worktree_overlays.rs b/src/client/shell/worktree_overlays.rs
+index 318c401..22c42b5 100644
+--- a/src/client/shell/worktree_overlays.rs
++++ b/src/client/shell/worktree_overlays.rs
+@@ -4,9 +4,10 @@ pub(super) fn render_worktree_create_overlay(
+     b: &mut Buffer,
+     create: &ClientWorktreeCreateOverlay,
+     p: &Palette,
++    border_style: crate::config::BorderStyleConfig,
+ ) -> Option<OverlayRender> {
+     let popup = popup(b.area, 68, 12)?;
+-    let inner = panel(b, popup, p.accent, p.panel_bg)?;
++    let inner = panel(b, popup, p.accent, p.panel_bg, border_style)?;
+     put_text(
+         b,
+         inner.x,
+@@ -110,10 +111,11 @@ pub(super) fn render_worktree_open_overlay(
+     b: &mut Buffer,
+     open: &ClientWorktreeOpenOverlay,
+     p: &Palette,
++    border_style: crate::config::BorderStyleConfig,
+ ) -> Option<OverlayRender> {
+     let popup_height = (open.entries.len().saturating_mul(2) + 7).clamp(12, 26) as u16;
+     let popup = popup(b.area, 96, popup_height)?;
+-    let inner = panel(b, popup, p.accent, p.panel_bg)?;
++    let inner = panel(b, popup, p.accent, p.panel_bg, border_style)?;
+     put_text(
+         b,
+         inner.x,
+@@ -309,9 +311,10 @@ pub(super) fn render_worktree_remove_overlay(
+     b: &mut Buffer,
+     remove: &ClientWorktreeRemoveOverlay,
+     p: &Palette,
++    border_style: crate::config::BorderStyleConfig,
+ ) -> Option<OverlayRender> {
+     let popup = popup(b.area, 72, 10)?;
+-    let inner = panel(b, popup, p.red, p.panel_bg)?;
++    let inner = panel(b, popup, p.red, p.panel_bg, border_style)?;
+     put_text(
+         b,
+         inner.x,
+diff --git a/src/config.rs b/src/config.rs
+index 60a22a1..920c8c3 100644
+--- a/src/config.rs
++++ b/src/config.rs
+@@ -22,11 +22,11 @@ pub use self::{
+         IndexedKeybind, Keybinds, LiveKeybindConfig,
+     },
+     model::{
+-        validated_sidebar_bounds, AgentPanelSortConfig, Config, ConfigReloadReport,
+-        ConfigReloadStatus, HostCursorModeConfig, NewTerminalCwdConfig, PaneBordersConfig,
+-        ShellModeConfig, SidebarCollapsedModeConfig, StatusIndicatorStyle, TabBarPositionConfig,
+-        ToastClipboardPosition, ToastConfig, ToastDelivery, ToastHerdrPosition,
+-        UpdateChannelConfig, MAX_TOAST_DELAY_SECONDS,
++        validated_sidebar_bounds, AgentPanelSortConfig, BorderStyleConfig, Config,
++        ConfigReloadReport, ConfigReloadStatus, HostCursorModeConfig, NewTerminalCwdConfig,
++        PaneBordersConfig, ShellModeConfig, SidebarCollapsedModeConfig, StatusIndicatorStyle,
++        TabBarPositionConfig, ToastClipboardPosition, ToastConfig, ToastDelivery,
++        ToastHerdrPosition, UpdateChannelConfig, MAX_TOAST_DELAY_SECONDS,
+     },
+     sidebar::{
+         AgentSidebarToken, AgentsSidebarConfig, SidebarConfig, SidebarTokenStyle,
+diff --git a/src/config/model.rs b/src/config/model.rs
+index 6ef6274..07c99c4 100644
+--- a/src/config/model.rs
++++ b/src/config/model.rs
+@@ -898,6 +898,46 @@ impl<'de> Deserialize<'de> for PaneBordersConfig {
+     }
+ }
+ 
++#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
++pub enum BorderStyleConfig {
++    #[default]
++    Plain,
++    Rounded,
++}
++
++impl BorderStyleConfig {
++    pub fn rounded(self) -> bool {
++        matches!(self, Self::Rounded)
++    }
++}
++
++impl<'de> Deserialize<'de> for BorderStyleConfig {
++    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
++    where
++        D: Deserializer<'de>,
++    {
++        struct BorderStyleVisitor;
++
++        impl<'de> de::Visitor<'de> for BorderStyleVisitor {
++            type Value = BorderStyleConfig;
++
++            fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
++                formatter.write_str("\"plain\" or \"rounded\"")
++            }
++
++            fn visit_str<E: de::Error>(self, value: &str) -> Result<Self::Value, E> {
++                match value {
++                    "plain" => Ok(BorderStyleConfig::Plain),
++                    "rounded" => Ok(BorderStyleConfig::Rounded),
++                    other => Err(E::invalid_value(de::Unexpected::Str(other), &self)),
++                }
++            }
++        }
++
++        deserializer.deserialize_str(BorderStyleVisitor)
++    }
++}
++
+ #[derive(Debug, Deserialize)]
+ #[serde(default)]
+ pub struct UiConfig {
+@@ -936,6 +976,8 @@ pub struct UiConfig {
+     /// disables them. Legacy booleans map true to auto and false to off.
+     /// Default: auto.
+     pub pane_borders: PaneBordersConfig,
++    /// Corner style for pane borders, panels, menus, and toasts. Default: plain.
++    pub border_style: BorderStyleConfig,
+     /// Draw borders along the outside edge of the pane area. Default: true.
+     pub pane_outer_borders: bool,
+     /// Draw interactive scrollbars beside terminal panes. Default: true.
+@@ -1174,6 +1216,7 @@ impl Default for UiConfig {
+             prompt_new_tab_name: true,
+             prompt_new_workspace_name: false,
+             pane_borders: PaneBordersConfig::Auto,
++            border_style: BorderStyleConfig::Plain,
+             pane_outer_borders: true,
+             pane_scrollbars: true,
+             pane_gaps: true,
+diff --git a/src/ui/panes.rs b/src/ui/panes.rs
+index ab3e352..da773fd 100644
+--- a/src/ui/panes.rs
++++ b/src/ui/panes.rs
+@@ -481,7 +481,7 @@ fn render_pane_borders(
+         let focused = pane_infos
+             .iter()
+             .any(|info| info.is_focused && line_touches_pane(x, y, info, app.pane_gaps));
+-        let symbol = line_cell_symbol(line);
++        let symbol = line_cell_symbol(line, app.border_style.rounded());
+         if symbol.is_empty() {
+             continue;
+         }
+@@ -673,7 +673,7 @@ fn render_pane_border_titles(
+     }
+ }
+ 
+-fn line_cell_symbol(line: LineCell) -> &'static str {
++fn line_cell_symbol(line: LineCell, rounded: bool) -> &'static str {
+     match (line.up, line.down, line.left, line.right) {
+         (true, true, true, true) => "┼",
+         (true, true, true, false) => "┤",
+@@ -686,10 +686,10 @@ fn line_cell_symbol(line: LineCell) -> &'static str {
+         (false, false, true, true) | (false, false, true, false) | (false, false, false, true) => {
+             "─"
+         }
+-        (false, true, false, true) => "┌",
+-        (false, true, true, false) => "┐",
+-        (true, false, false, true) => "└",
+-        (true, false, true, false) => "┘",
++        (false, true, false, true) => if rounded { "╭" } else { "┌" },
++        (false, true, true, false) => if rounded { "╮" } else { "┐" },
++        (true, false, false, true) => if rounded { "╰" } else { "└" },
++        (true, false, true, false) => if rounded { "╯" } else { "┘" },
+         _ => "",
+     }
+ }

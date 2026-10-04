@@ -19,5 +19,11 @@
       default = false;
       description = "Enable Waydroid (Android container) with Google Play (GApps) images";
     };
+
+    warp = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = "Enable the Cloudflare WARP (Zero Trust) client daemon";
+    };
   };
 }

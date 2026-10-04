@@ -17,6 +17,7 @@
     "gaming"
     "media"
     "virtualization"
+    "vpn"
   ];
 
   # Wayland compositors to install and configure.

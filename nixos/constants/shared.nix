@@ -48,8 +48,8 @@
     };
 
     kitty = {
-      opacity = 0.95;
-      backgroundBlur = 4;
+      opacity = 1.0;
+      backgroundBlur = 0;
       windowMargin = 11;
     };
   };
