@@ -7,8 +7,9 @@
 
   keyboard = {
     xkb = {
-      layout = "us";
+      layout = "us,ara";
       variant = "";
+      options = "grp:alts_toggle";
     };
   };
 
@@ -48,8 +49,8 @@
     };
 
     kitty = {
-      opacity = 1.0;
-      backgroundBlur = 0;
+      opacity = 0.85;
+      backgroundBlur = 20;
       windowMargin = 11;
     };
   };

@@ -29,5 +29,8 @@ in
     };
   };
 
-  swapDevices = lib.optional (config.my.host.swap != null) config.my.host.swap;
+  # Host swap facts also carry zram tuning; swapDevices takes only device + size.
+  swapDevices = lib.optional (config.my.host.swap != null) {
+    inherit (config.my.host.swap) device size;
+  };
 }

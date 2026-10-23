@@ -16,6 +16,11 @@ in
           xkb = {
             layout = mkOption { type = types.str; };
             variant = mkOption { type = types.str; };
+            options = mkOption {
+              type = types.str;
+              default = "";
+              description = "xkb options, e.g. grp:alts_toggle to switch layouts";
+            };
           };
         };
 
@@ -93,6 +98,19 @@ in
           description = "Assemblies composed into this host (assemblies/<name>.nix)";
         };
 
+        displays = mkOption {
+          type = types.submodule {
+            options = {
+              primary = mkOption { type = types.str; };
+              secondary = mkOption {
+                type = types.nullOr types.str;
+                default = null;
+              };
+            };
+          };
+          description = "Output names the desktop binds workspaces to";
+        };
+
         boot = {
           initrdAvailableKernelModules = mkOption {
             type = types.listOf types.str;
@@ -114,6 +132,11 @@ in
               options = {
                 device = mkOption { type = types.str; };
                 size = mkOption { type = types.int; };
+                zramPercent = mkOption {
+                  type = types.ints.unsigned;
+                  default = 0;
+                  description = "Percent of RAM for a zram swap device; 0 disables zram";
+                };
               };
             }
           );

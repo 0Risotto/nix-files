@@ -1,0 +1,9 @@
+// Fixed layout for the host displays. Ryoku writes monitors.kdl at runtime;
+// this seed is included after it, so a hand-pinned mode or layout wins over
+// autoscale.
+
+output "@primaryOutput@" {
+    mode "1920x1080@200"
+    position x=0 y=0
+}
+@secondaryOutput@

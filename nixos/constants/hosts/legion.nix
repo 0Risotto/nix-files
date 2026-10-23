@@ -31,12 +31,14 @@
       "sd_mod"
     ];
     kernelModules = [ "kvm-intel" ];
-    zswap = true;
+    # zram (swap.zramPercent) supersedes zswap as the compressed-swap tier.
+    zswap = false;
   };
 
   swap = {
     device = "/swapfile";
     size = 8192;
+    zramPercent = 30;
   };
 
   disks = {
@@ -48,6 +50,11 @@
     nvidiaBusId = "PCI:1:0:0";
     # Intel UHD iGPU (i5-11400H), exposed only when BIOS uses hybrid graphics.
     intelBusId = "PCI:0:2:0";
+  };
+
+  displays = {
+    primary = "HDMI-A-1";
+    secondary = "eDP-1";
   };
 
   efi = {

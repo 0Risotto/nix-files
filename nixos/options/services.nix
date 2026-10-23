@@ -14,6 +14,12 @@
       description = "Enable nh (Nix CLI helper) with system-level flake vars";
     };
 
+    scx = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = "Enable the sched-ext CPU scheduler (scx_lavd) via scx_loader";
+    };
+
     waydroid = lib.mkOption {
       type = lib.types.bool;
       default = false;

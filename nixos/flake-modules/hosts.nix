@@ -15,22 +15,6 @@ let
 
   assemblies = import ../assemblies;
 
-  # Always-on modules: options, core system, machine hardware, base services.
-  baseModules = [
-    ../options
-    ../units/nixos/core/base.nix
-    ../units/nixos/core/apps.nix
-    ../units/nixos/core/home-manager.nix
-    ../units/nixos/hardware/kernel.nix
-    ../units/nixos/hardware/filesystems.nix
-    ../units/nixos/hardware/efi.nix
-    ../units/nixos/hardware/audio.nix
-    ../units/nixos/hardware/nvidia.nix
-    ../units/nixos/hardware/intel.nix
-    ../units/nixos/hardware/thermal.nix
-    ../units/nixos/services/nh.nix
-  ];
-
   mkHost =
     name:
     let
@@ -41,16 +25,18 @@ let
       inherit name;
       value = inputs.nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs self; };
-        modules =
-          baseModules
-          ++ map (a: a.nixos) selected
-          ++ [
-            {
-              # Assembly home halves are shared by every user on the host.
-              home-manager.sharedModules = assemblies.baseHome ++ map (a: a.home or { }) selected;
-            }
-            (hostsDir + "/${name}.nix")
-          ];
+        modules = [
+          ../options
+        ]
+        ++ assemblies.baseNixos
+        ++ map (a: a.nixos) selected
+        ++ [
+          {
+            # Assembly home halves are shared by every user on the host.
+            home-manager.sharedModules = assemblies.baseHome ++ map (a: a.home or { }) selected;
+          }
+          (hostsDir + "/${name}.nix")
+        ];
       };
     };
 

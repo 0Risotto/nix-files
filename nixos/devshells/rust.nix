@@ -8,7 +8,6 @@ _: {
         rust-analyzer
         rustfmt
         cargo-tauri
-        trunk
       ];
       shellHook = ''
         exec fish

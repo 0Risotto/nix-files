@@ -12,7 +12,7 @@ in
 {
   # mkBefore: Ryoku's runtime bundle also ships a plain kitty. The wrapped host
   # kitty must win the /run/current-system/sw/bin/kitty collision, or its
-  # embedded config (font, shell = herdr, keybindings) is shadowed.
+  # embedded config (font, shell = fish, keybindings) is shadowed.
   environment.systemPackages = lib.mkBefore [
     (wrap {
       inherit pkgs;
@@ -28,7 +28,7 @@ in
         confirm_os_window_close = 0;
         cursor_shape = "beam";
         cursor_trail = 1;
-        shell = "herdr";
+        shell = "fish";
         window_margin_width = constants.theme.kitty.windowMargin;
       };
 

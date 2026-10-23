@@ -1,2 +1,5 @@
 nixos/result
 stow/
+
+# Playwright MCP scratch output
+**/.playwright-mcp/

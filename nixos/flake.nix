@@ -13,8 +13,6 @@
 
     nixos-hardware.url = "github:NixOS/nixos-hardware";
 
-    zen-browser.url = "github:youwen5/zen-browser-flake";
-
     ryoku = {
       url = "github:aethctl/Ryoku-on-NixOS";
       # Keep Ryoku's own tested nixpkgs revision instead of resolving
@@ -39,7 +37,9 @@
         let
           entries = builtins.readDir dir;
           names = builtins.attrNames entries;
-          files = builtins.filter (n: entries.${n} == "regular") names;
+          # Only .nix files are modules; a README or lock file dropped next to
+          # them must not be imported.
+          files = builtins.filter (n: entries.${n} == "regular" && builtins.match ".*\\.nix" n != null) names;
           dirs = builtins.filter (n: entries.${n} == "directory") names;
         in
         map (n: dir + "/${n}") files ++ builtins.concatMap (n: importTree (dir + "/${n}")) dirs;

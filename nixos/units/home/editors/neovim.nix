@@ -11,6 +11,7 @@ let
     "lua/config/keymaps.lua"
     "lua/config/lazy.lua"
     "lua/config/options.lua"
+    "lua/plugins/transparency.lua"
   ];
 in
 {
